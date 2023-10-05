@@ -1,0 +1,193 @@
+scalar Date
+
+type Period {
+  start: Date
+  end: Date
+}
+
+type Coding {
+  system: String
+  version: String
+  code: String
+  display: String
+}
+
+type CodeableConcept {
+  coding: Coding
+  text: String
+}
+
+type Identifier {
+  use: String
+  type: CodeableConcept
+  system: String
+  value: String
+  period: Period
+  assigner: String
+}
+
+type HumanName {
+  use: String
+  text: String
+  family: String
+  given: String
+  prefix: String
+  suffix: String
+  period: Period
+}
+
+type ContactPoint {
+  system: String
+  value: String
+  use: String
+  rank: Int
+  period: Period
+}
+
+type Address {
+  use: String
+  type: String
+  text: String
+  line: String
+  city: String
+  district: String
+  state: String
+  postalCode: String
+  country: String
+  period: Period
+}
+
+type Reference {
+  reference: String
+  type: String
+  identifier: Identifier
+  display: String
+}
+
+type ExtendedContactDetail {
+  purpose: CodeableConcept
+  name: HumanName
+  telecom: [ContactPoint]
+  address: [Address]
+  organization: Reference
+  period: Period
+}
+
+type Department {
+  _id: ID!
+  ID_CP: String
+  VIG_INI: Date
+  VIG_FIM: Date
+  UH: String
+  CR: String
+  identifier: Identifier
+  active: Boolean
+  type: CodeableConcept
+  name: String
+  alias: String
+  description: String
+  contact: ExtendedContactDetail
+  partOf: Reference
+  endpoint: Reference
+  AGREGA1: String
+  AGREGA2: String
+  AGREGA3: String
+  COD_ESTATISTICO: [String]
+  CHILDREN: [Int]
+  DES_DEPARTAMENTO: String
+  COD_DEPARTAMENTO: Int
+}
+
+type Service {
+  _id: ID!
+  ID_CP: String
+  VIG_INI: Date
+  VIG_FIM: Date
+  UH: String
+  CR: String
+  identifier: Identifier
+  active: Boolean
+  type: CodeableConcept
+  name: String
+  alias: String
+  description: String
+  contact: ExtendedContactDetail
+  partOf: Reference
+  endpoint: Reference
+  AGREGA1: String
+  AGREGA2: String
+  AGREGA3: String
+  COD_ESTATISTICO: [String]
+  CHILDREN: [Int]
+  DES_DEPARTAMENTO: String
+  COD_DEPARTAMENTO: Int
+  DES_SERVICO: String
+  COD_SERVICO: Int
+}
+
+type Unit {
+  _id: ID!
+  ID_CP: String
+  VIG_INI: Date
+  VIG_FIM: Date
+  UH: String
+  CR: String
+  identifier: Identifier
+  active: Boolean
+  type: CodeableConcept
+  name: String
+  alias: String
+  description: String
+  contact: ExtendedContactDetail
+  partOf: Reference
+  endpoint: Reference
+  AGREGA1: String
+  AGREGA2: String
+  AGREGA3: String
+  COD_ESTATISTICO: [String]
+  DES_DEPARTAMENTO: String
+  COD_DEPARTAMENTO: Int
+  DES_SERVICO: String
+  COD_SERVICO: Int
+  DES_UNIDADE: String
+  COD_UNIDADE: Int
+}
+
+type Specialty {
+  _id: ID!
+  ID_CP: String
+  VIG_INI: Date
+  VIG_FIM: Date
+  UH: String
+  CR: String
+  identifier: Identifier
+  active: Boolean
+  type: CodeableConcept
+  name: String
+  alias: String
+  description: String
+  contact: ExtendedContactDetail
+  partOf: Reference
+  endpoint: Reference
+  AGREGA1: String
+  AGREGA2: String
+  AGREGA3: String
+  DES_ESTATISTICO: String
+  COD_ESTATISTICO: String
+  DES_DEPARTAMENTO: String
+  COD_DEPARTAMENTO: Int
+  DES_SERVICO: String
+  COD_SERVICO: Int
+  DES_UNIDADE: String
+  COD_UNIDADE: Int
+}
+
+type Query {
+  departments: [Department]
+  services: [Service]
+  units: [Unit]
+  specialties: [Specialty]
+  departmentById(id: ID!): Department
+  departmentByCOD(cod: Int!): Department
+  departmentByDES(des: String!): Department
+}
