@@ -6,6 +6,7 @@ import * as cron from 'node-cron';
 import { readFileSync } from 'fs';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
 
 import { resolvers } from './graphql/resolvers';
 import { checkForUpdates } from './functions/updateCheckerPostgres';
@@ -24,7 +25,11 @@ const bootstrapServer = async () => {
     checkForUpdates(lastCheckTimestamp);
   });
 
-  const server = new ApolloServer({ typeDefs, resolvers });
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    plugins: [ApolloServerPluginCacheControl({ defaultMaxAge: 60 })],
+  });
   await server.start();
 
   app.use(cors());

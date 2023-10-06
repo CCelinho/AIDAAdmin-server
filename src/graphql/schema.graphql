@@ -1,5 +1,10 @@
 scalar Date
 
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
 type Period {
   start: Date
   end: Date
@@ -191,3 +196,9 @@ type Query {
   departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
 }
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+  inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION

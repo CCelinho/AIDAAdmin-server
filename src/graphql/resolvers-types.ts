@@ -31,6 +31,11 @@ export type Address = {
   use?: Maybe<Scalars['String']['output']>;
 };
 
+export enum CacheControlScope {
+  Private = 'PRIVATE',
+  Public = 'PUBLIC'
+}
+
 export type CodeableConcept = {
   __typename?: 'CodeableConcept';
   coding?: Maybe<Coding>;
@@ -312,6 +317,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Address: ResolverTypeWrapper<Address>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  CacheControlScope: CacheControlScope;
   CodeableConcept: ResolverTypeWrapper<CodeableConcept>;
   Coding: ResolverTypeWrapper<Coding>;
   ContactPoint: ResolverTypeWrapper<ContactPoint>;
@@ -353,6 +359,14 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String']['output'];
   Unit: Unit;
 }>;
+
+export type CacheControlDirectiveArgs = {
+  inheritMaxAge?: Maybe<Scalars['Boolean']['input']>;
+  maxAge?: Maybe<Scalars['Int']['input']>;
+  scope?: Maybe<CacheControlScope>;
+};
+
+export type CacheControlDirectiveResolver<Result, Parent, ContextType = any, Args = CacheControlDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type AddressResolvers<ContextType = any, ParentType extends ResolversParentTypes['Address'] = ResolversParentTypes['Address']> = ResolversObject<{
   city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -581,3 +595,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Unit?: UnitResolvers<ContextType>;
 }>;
 
+export type DirectiveResolvers<ContextType = any> = ResolversObject<{
+  cacheControl?: CacheControlDirectiveResolver<any, any, ContextType>;
+}>;

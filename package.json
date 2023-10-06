@@ -7,7 +7,7 @@
     "compile": "npx tsc",
     "dev": "concurrently \"tsc -w\" \"nodemon --experimental-specifier-resolution=node -q dist/server.js\"",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "codegen": "graphql-codegen --config ./codegen.ts"
+    "codegen": "graphql-codegen --config ./src/codegen.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.7.1",
