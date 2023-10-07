@@ -129,6 +129,7 @@ export type Query = {
   departmentById?: Maybe<Department>;
   departments?: Maybe<Array<Maybe<Department>>>;
   services?: Maybe<Array<Maybe<Service>>>;
+  servicesByDep?: Maybe<Array<Maybe<Service>>>;
   specialties?: Maybe<Array<Maybe<Specialty>>>;
   units?: Maybe<Array<Maybe<Unit>>>;
 };
@@ -146,6 +147,11 @@ export type QueryDepartmentByDesArgs = {
 
 export type QueryDepartmentByIdArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryServicesByDepArgs = {
+  cod: Scalars['Int']['input'];
 };
 
 export type Reference = {
@@ -478,6 +484,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   departmentById?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByIdArgs, 'id'>>;
   departments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Department']>>>, ParentType, ContextType>;
   services?: Resolver<Maybe<Array<Maybe<ResolversTypes['Service']>>>, ParentType, ContextType>;
+  servicesByDep?: Resolver<Maybe<Array<Maybe<ResolversTypes['Service']>>>, ParentType, ContextType, RequireFields<QueryServicesByDepArgs, 'cod'>>;
   specialties?: Resolver<Maybe<Array<Maybe<ResolversTypes['Specialty']>>>, ParentType, ContextType>;
   units?: Resolver<Maybe<Array<Maybe<ResolversTypes['Unit']>>>, ParentType, ContextType>;
 }>;

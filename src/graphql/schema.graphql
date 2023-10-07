@@ -195,6 +195,7 @@ type Query {
   departmentById(id: ID!): Department
   departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
+  servicesByDep(cod: Int!): [Service]
 }
 
 directive @cacheControl(

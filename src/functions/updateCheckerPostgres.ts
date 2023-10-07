@@ -1,6 +1,6 @@
 // Imports
 import { readFileSync } from 'fs';
-import * as pg from 'pg';
+import { Client } from 'pg';
 import 'dotenv/config';
 
 // Modules
@@ -20,7 +20,7 @@ import formatDepartment from '../mongo/aggregation/formatDepartment';
 export const checkForUpdates = async (lastCheckTimestamp: string) => {
   console.log('Last check for updates: ' + lastCheckTimestamp);
 
-  const postgresClient = new pg.Client(pgConfig);
+  const postgresClient = new Client(pgConfig);
 
   try {
     // Query postgres for updates
