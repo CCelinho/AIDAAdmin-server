@@ -14,7 +14,8 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  Date: { input: "Date"; output: "Date"; }
+  Date: { input: any; output: any; }
+  ObjectId: { input: any; output: any; }
 };
 
 export type Address = {
@@ -59,7 +60,7 @@ export type ContactPoint = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
-export type Department = {
+export type Department = Organization & {
   __typename?: 'Department';
   AGREGA1?: Maybe<Scalars['String']['output']>;
   AGREGA2?: Maybe<Scalars['String']['output']>;
@@ -73,7 +74,7 @@ export type Department = {
   UH?: Maybe<Scalars['String']['output']>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
-  _id: Scalars['ID']['output'];
+  _id?: Maybe<Scalars['ObjectId']['output']>;
   active?: Maybe<Scalars['Boolean']['output']>;
   alias?: Maybe<Scalars['String']['output']>;
   contact?: Maybe<ExtendedContactDetail>;
@@ -116,6 +117,29 @@ export type Identifier = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
+export type Organization = {
+  AGREGA1?: Maybe<Scalars['String']['output']>;
+  AGREGA2?: Maybe<Scalars['String']['output']>;
+  AGREGA3?: Maybe<Scalars['String']['output']>;
+  COD_DEPARTAMENTO?: Maybe<Scalars['Int']['output']>;
+  CR?: Maybe<Scalars['String']['output']>;
+  DES_DEPARTAMENTO?: Maybe<Scalars['String']['output']>;
+  ID_CP?: Maybe<Scalars['String']['output']>;
+  UH?: Maybe<Scalars['String']['output']>;
+  VIG_FIM?: Maybe<Scalars['Date']['output']>;
+  VIG_INI?: Maybe<Scalars['Date']['output']>;
+  _id?: Maybe<Scalars['ObjectId']['output']>;
+  active?: Maybe<Scalars['Boolean']['output']>;
+  alias?: Maybe<Scalars['String']['output']>;
+  contact?: Maybe<ExtendedContactDetail>;
+  description?: Maybe<Scalars['String']['output']>;
+  endpoint?: Maybe<Reference>;
+  identifier?: Maybe<Identifier>;
+  name?: Maybe<Scalars['String']['output']>;
+  partOf?: Maybe<Reference>;
+  type?: Maybe<CodeableConcept>;
+};
+
 export type Period = {
   __typename?: 'Period';
   end?: Maybe<Scalars['Date']['output']>;
@@ -127,11 +151,13 @@ export type Query = {
   departmentByCOD?: Maybe<Department>;
   departmentByDES?: Maybe<Department>;
   departmentById?: Maybe<Department>;
-  departments?: Maybe<Array<Maybe<Department>>>;
-  services?: Maybe<Array<Maybe<Service>>>;
-  servicesByDep?: Maybe<Array<Maybe<Service>>>;
-  specialties?: Maybe<Array<Maybe<Specialty>>>;
-  units?: Maybe<Array<Maybe<Unit>>>;
+  departments?: Maybe<Array<Department>>;
+  gabriel?: Maybe<Array<Maybe<Specialty>>>;
+  organizations?: Maybe<Array<Organization>>;
+  services?: Maybe<Array<Service>>;
+  servicesByDep?: Maybe<Array<Service>>;
+  specialties?: Maybe<Array<Specialty>>;
+  units?: Maybe<Array<Unit>>;
 };
 
 
@@ -146,7 +172,7 @@ export type QueryDepartmentByDesArgs = {
 
 
 export type QueryDepartmentByIdArgs = {
-  id: Scalars['ID']['input'];
+  id?: InputMaybe<Scalars['ObjectId']['input']>;
 };
 
 
@@ -162,7 +188,7 @@ export type Reference = {
   type?: Maybe<Scalars['String']['output']>;
 };
 
-export type Service = {
+export type Service = Organization & {
   __typename?: 'Service';
   AGREGA1?: Maybe<Scalars['String']['output']>;
   AGREGA2?: Maybe<Scalars['String']['output']>;
@@ -178,7 +204,7 @@ export type Service = {
   UH?: Maybe<Scalars['String']['output']>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
-  _id: Scalars['ID']['output'];
+  _id?: Maybe<Scalars['ObjectId']['output']>;
   active?: Maybe<Scalars['Boolean']['output']>;
   alias?: Maybe<Scalars['String']['output']>;
   contact?: Maybe<ExtendedContactDetail>;
@@ -190,7 +216,7 @@ export type Service = {
   type?: Maybe<CodeableConcept>;
 };
 
-export type Specialty = {
+export type Specialty = Organization & {
   __typename?: 'Specialty';
   AGREGA1?: Maybe<Scalars['String']['output']>;
   AGREGA2?: Maybe<Scalars['String']['output']>;
@@ -208,7 +234,7 @@ export type Specialty = {
   UH?: Maybe<Scalars['String']['output']>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
-  _id: Scalars['ID']['output'];
+  _id?: Maybe<Scalars['ObjectId']['output']>;
   active?: Maybe<Scalars['Boolean']['output']>;
   alias?: Maybe<Scalars['String']['output']>;
   contact?: Maybe<ExtendedContactDetail>;
@@ -220,7 +246,7 @@ export type Specialty = {
   type?: Maybe<CodeableConcept>;
 };
 
-export type Unit = {
+export type Unit = Organization & {
   __typename?: 'Unit';
   AGREGA1?: Maybe<Scalars['String']['output']>;
   AGREGA2?: Maybe<Scalars['String']['output']>;
@@ -237,7 +263,7 @@ export type Unit = {
   UH?: Maybe<Scalars['String']['output']>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
-  _id: Scalars['ID']['output'];
+  _id?: Maybe<Scalars['ObjectId']['output']>;
   active?: Maybe<Scalars['Boolean']['output']>;
   alias?: Maybe<Scalars['String']['output']>;
   contact?: Maybe<ExtendedContactDetail>;
@@ -249,8 +275,7 @@ export type Unit = {
   type?: Maybe<CodeableConcept>;
 };
 
-export type WithIndex<TObject> = TObject & Record<string, any>;
-export type ResolversObject<TObject> = WithIndex<TObject>;
+
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
@@ -318,9 +343,13 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 
+/** Mapping of interface types */
+export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
+  Organization: ( Department ) | ( Service ) | ( Specialty ) | ( Unit );
+};
 
 /** Mapping between all available schema types and the resolvers types */
-export type ResolversTypes = ResolversObject<{
+export type ResolversTypes = {
   Address: ResolverTypeWrapper<Address>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CacheControlScope: CacheControlScope;
@@ -331,9 +360,10 @@ export type ResolversTypes = ResolversObject<{
   Department: ResolverTypeWrapper<Department>;
   ExtendedContactDetail: ResolverTypeWrapper<ExtendedContactDetail>;
   HumanName: ResolverTypeWrapper<HumanName>;
-  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Identifier: ResolverTypeWrapper<Identifier>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  ObjectId: ResolverTypeWrapper<Scalars['ObjectId']['output']>;
+  Organization: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['Organization']>;
   Period: ResolverTypeWrapper<Period>;
   Query: ResolverTypeWrapper<{}>;
   Reference: ResolverTypeWrapper<Reference>;
@@ -341,10 +371,10 @@ export type ResolversTypes = ResolversObject<{
   Specialty: ResolverTypeWrapper<Specialty>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Unit: ResolverTypeWrapper<Unit>;
-}>;
+};
 
 /** Mapping between all available schema types and the resolvers parents */
-export type ResolversParentTypes = ResolversObject<{
+export type ResolversParentTypes = {
   Address: Address;
   Boolean: Scalars['Boolean']['output'];
   CodeableConcept: CodeableConcept;
@@ -354,9 +384,10 @@ export type ResolversParentTypes = ResolversObject<{
   Department: Department;
   ExtendedContactDetail: ExtendedContactDetail;
   HumanName: HumanName;
-  ID: Scalars['ID']['output'];
   Identifier: Identifier;
   Int: Scalars['Int']['output'];
+  ObjectId: Scalars['ObjectId']['output'];
+  Organization: ResolversInterfaceTypes<ResolversParentTypes>['Organization'];
   Period: Period;
   Query: {};
   Reference: Reference;
@@ -364,7 +395,7 @@ export type ResolversParentTypes = ResolversObject<{
   Specialty: Specialty;
   String: Scalars['String']['output'];
   Unit: Unit;
-}>;
+};
 
 export type CacheControlDirectiveArgs = {
   inheritMaxAge?: Maybe<Scalars['Boolean']['input']>;
@@ -374,7 +405,7 @@ export type CacheControlDirectiveArgs = {
 
 export type CacheControlDirectiveResolver<Result, Parent, ContextType = any, Args = CacheControlDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
-export type AddressResolvers<ContextType = any, ParentType extends ResolversParentTypes['Address'] = ResolversParentTypes['Address']> = ResolversObject<{
+export type AddressResolvers<ContextType = any, ParentType extends ResolversParentTypes['Address'] = ResolversParentTypes['Address']> = {
   city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   district?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -386,36 +417,36 @@ export type AddressResolvers<ContextType = any, ParentType extends ResolversPare
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   use?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type CodeableConceptResolvers<ContextType = any, ParentType extends ResolversParentTypes['CodeableConcept'] = ResolversParentTypes['CodeableConcept']> = ResolversObject<{
+export type CodeableConceptResolvers<ContextType = any, ParentType extends ResolversParentTypes['CodeableConcept'] = ResolversParentTypes['CodeableConcept']> = {
   coding?: Resolver<Maybe<ResolversTypes['Coding']>, ParentType, ContextType>;
   text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type CodingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Coding'] = ResolversParentTypes['Coding']> = ResolversObject<{
+export type CodingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Coding'] = ResolversParentTypes['Coding']> = {
   code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   display?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   system?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type ContactPointResolvers<ContextType = any, ParentType extends ResolversParentTypes['ContactPoint'] = ResolversParentTypes['ContactPoint']> = ResolversObject<{
+export type ContactPointResolvers<ContextType = any, ParentType extends ResolversParentTypes['ContactPoint'] = ResolversParentTypes['ContactPoint']> = {
   period?: Resolver<Maybe<ResolversTypes['Period']>, ParentType, ContextType>;
   rank?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   system?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   use?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
 
-export type DepartmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Department'] = ResolversParentTypes['Department']> = ResolversObject<{
+export type DepartmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Department'] = ResolversParentTypes['Department']> = {
   AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -428,7 +459,7 @@ export type DepartmentResolvers<ContextType = any, ParentType extends ResolversP
   UH?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
   active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
@@ -439,9 +470,9 @@ export type DepartmentResolvers<ContextType = any, ParentType extends ResolversP
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type ExtendedContactDetailResolvers<ContextType = any, ParentType extends ResolversParentTypes['ExtendedContactDetail'] = ResolversParentTypes['ExtendedContactDetail']> = ResolversObject<{
+export type ExtendedContactDetailResolvers<ContextType = any, ParentType extends ResolversParentTypes['ExtendedContactDetail'] = ResolversParentTypes['ExtendedContactDetail']> = {
   address?: Resolver<Maybe<Array<Maybe<ResolversTypes['Address']>>>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['HumanName']>, ParentType, ContextType>;
   organization?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
@@ -449,9 +480,9 @@ export type ExtendedContactDetailResolvers<ContextType = any, ParentType extends
   purpose?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
   telecom?: Resolver<Maybe<Array<Maybe<ResolversTypes['ContactPoint']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type HumanNameResolvers<ContextType = any, ParentType extends ResolversParentTypes['HumanName'] = ResolversParentTypes['HumanName']> = ResolversObject<{
+export type HumanNameResolvers<ContextType = any, ParentType extends ResolversParentTypes['HumanName'] = ResolversParentTypes['HumanName']> = {
   family?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   given?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   period?: Resolver<Maybe<ResolversTypes['Period']>, ParentType, ContextType>;
@@ -460,9 +491,9 @@ export type HumanNameResolvers<ContextType = any, ParentType extends ResolversPa
   text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   use?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type IdentifierResolvers<ContextType = any, ParentType extends ResolversParentTypes['Identifier'] = ResolversParentTypes['Identifier']> = ResolversObject<{
+export type IdentifierResolvers<ContextType = any, ParentType extends ResolversParentTypes['Identifier'] = ResolversParentTypes['Identifier']> = {
   assigner?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   period?: Resolver<Maybe<ResolversTypes['Period']>, ParentType, ContextType>;
   system?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -470,34 +501,64 @@ export type IdentifierResolvers<ContextType = any, ParentType extends ResolversP
   use?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type PeriodResolvers<ContextType = any, ParentType extends ResolversParentTypes['Period'] = ResolversParentTypes['Period']> = ResolversObject<{
+export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectId'], any> {
+  name: 'ObjectId';
+}
+
+export type OrganizationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
+  __resolveType: TypeResolveFn<'Department' | 'Service' | 'Specialty' | 'Unit', ParentType, ContextType>;
+  AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  COD_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  DES_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  UH?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
+  active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  endpoint?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
+};
+
+export type PeriodResolvers<ContextType = any, ParentType extends ResolversParentTypes['Period'] = ResolversParentTypes['Period']> = {
   end?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   start?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   departmentByCOD?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByCodArgs, 'cod'>>;
   departmentByDES?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByDesArgs, 'des'>>;
-  departmentById?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByIdArgs, 'id'>>;
-  departments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Department']>>>, ParentType, ContextType>;
-  services?: Resolver<Maybe<Array<Maybe<ResolversTypes['Service']>>>, ParentType, ContextType>;
-  servicesByDep?: Resolver<Maybe<Array<Maybe<ResolversTypes['Service']>>>, ParentType, ContextType, RequireFields<QueryServicesByDepArgs, 'cod'>>;
-  specialties?: Resolver<Maybe<Array<Maybe<ResolversTypes['Specialty']>>>, ParentType, ContextType>;
-  units?: Resolver<Maybe<Array<Maybe<ResolversTypes['Unit']>>>, ParentType, ContextType>;
-}>;
+  departmentById?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, Partial<QueryDepartmentByIdArgs>>;
+  departments?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType>;
+  gabriel?: Resolver<Maybe<Array<Maybe<ResolversTypes['Specialty']>>>, ParentType, ContextType>;
+  organizations?: Resolver<Maybe<Array<ResolversTypes['Organization']>>, ParentType, ContextType>;
+  services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType>;
+  servicesByDep?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, RequireFields<QueryServicesByDepArgs, 'cod'>>;
+  specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType>;
+  units?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType>;
+};
 
-export type ReferenceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Reference'] = ResolversParentTypes['Reference']> = ResolversObject<{
+export type ReferenceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Reference'] = ResolversParentTypes['Reference']> = {
   display?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
   reference?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type ServiceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Service'] = ResolversParentTypes['Service']> = ResolversObject<{
+export type ServiceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Service'] = ResolversParentTypes['Service']> = {
   AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -512,7 +573,7 @@ export type ServiceResolvers<ContextType = any, ParentType extends ResolversPare
   UH?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
   active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
@@ -523,9 +584,9 @@ export type ServiceResolvers<ContextType = any, ParentType extends ResolversPare
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type SpecialtyResolvers<ContextType = any, ParentType extends ResolversParentTypes['Specialty'] = ResolversParentTypes['Specialty']> = ResolversObject<{
+export type SpecialtyResolvers<ContextType = any, ParentType extends ResolversParentTypes['Specialty'] = ResolversParentTypes['Specialty']> = {
   AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -542,7 +603,7 @@ export type SpecialtyResolvers<ContextType = any, ParentType extends ResolversPa
   UH?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
   active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
@@ -553,9 +614,9 @@ export type SpecialtyResolvers<ContextType = any, ParentType extends ResolversPa
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type UnitResolvers<ContextType = any, ParentType extends ResolversParentTypes['Unit'] = ResolversParentTypes['Unit']> = ResolversObject<{
+export type UnitResolvers<ContextType = any, ParentType extends ResolversParentTypes['Unit'] = ResolversParentTypes['Unit']> = {
   AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -571,7 +632,7 @@ export type UnitResolvers<ContextType = any, ParentType extends ResolversParentT
   UH?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
   active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
@@ -582,9 +643,9 @@ export type UnitResolvers<ContextType = any, ParentType extends ResolversParentT
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+};
 
-export type Resolvers<ContextType = any> = ResolversObject<{
+export type Resolvers<ContextType = any> = {
   Address?: AddressResolvers<ContextType>;
   CodeableConcept?: CodeableConceptResolvers<ContextType>;
   Coding?: CodingResolvers<ContextType>;
@@ -594,14 +655,16 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ExtendedContactDetail?: ExtendedContactDetailResolvers<ContextType>;
   HumanName?: HumanNameResolvers<ContextType>;
   Identifier?: IdentifierResolvers<ContextType>;
+  ObjectId?: GraphQLScalarType;
+  Organization?: OrganizationResolvers<ContextType>;
   Period?: PeriodResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Reference?: ReferenceResolvers<ContextType>;
   Service?: ServiceResolvers<ContextType>;
   Specialty?: SpecialtyResolvers<ContextType>;
   Unit?: UnitResolvers<ContextType>;
-}>;
+};
 
-export type DirectiveResolvers<ContextType = any> = ResolversObject<{
+export type DirectiveResolvers<ContextType = any> = {
   cacheControl?: CacheControlDirectiveResolver<any, any, ContextType>;
-}>;
+};

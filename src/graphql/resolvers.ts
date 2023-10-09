@@ -4,6 +4,7 @@ import { department, service, specialty, unit } from '../mongo/schemas/schemas';
 export const resolvers: Resolvers = {
   Query: {
     departments: async () => {
+      console.warn('-----------------------------');
       return await department.find({ active: true });
     },
     services: async () => {
@@ -14,6 +15,24 @@ export const resolvers: Resolvers = {
     },
     specialties: async () => {
       return await specialty.find({ active: true });
+    },
+    gabriel: async () => {
+      return await specialty.find({ active: true });
+    },
+    organizations: async () => {
+      // const departments = await department.find({ active: true });
+      // const services = await service.find({ active: true });
+      // const units = await unit.find({ active: true });
+      // const specialties = await specialty.find({ active: true });
+
+      // const mergedResults = [
+      //   ...departments,
+      //   ...services,
+      //   ...units,
+      //   ...specialties,
+      // ];
+
+      return await department.find({});
     },
     departmentById: async (_, { id }) => {
       try {

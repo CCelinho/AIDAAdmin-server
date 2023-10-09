@@ -4,7 +4,7 @@ import cors from 'cors';
 import * as cron from 'node-cron';
 
 import { readFileSync } from 'fs';
-import { ApolloServer } from '@apollo/server';
+import { ApolloServer, BaseContext } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
 
@@ -25,7 +25,7 @@ const bootstrapServer = async () => {
     checkForUpdates(lastCheckTimestamp);
   });
 
-  const server = new ApolloServer({
+  const server = new ApolloServer<BaseContext>({
     typeDefs,
     resolvers,
     plugins: [ApolloServerPluginCacheControl({ defaultMaxAge: 60 })],
