@@ -152,8 +152,8 @@ export type Query = {
   departmentByDES?: Maybe<Department>;
   departmentById?: Maybe<Department>;
   departments?: Maybe<Array<Department>>;
-  gabriel?: Maybe<Array<Maybe<Specialty>>>;
   organizations?: Maybe<Array<Organization>>;
+  resolvertest?: Maybe<Scalars['String']['output']>;
   services?: Maybe<Array<Service>>;
   servicesByDep?: Maybe<Array<Service>>;
   specialties?: Maybe<Array<Specialty>>;
@@ -542,8 +542,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   departmentByDES?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByDesArgs, 'des'>>;
   departmentById?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, Partial<QueryDepartmentByIdArgs>>;
   departments?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType>;
-  gabriel?: Resolver<Maybe<Array<Maybe<ResolversTypes['Specialty']>>>, ParentType, ContextType>;
   organizations?: Resolver<Maybe<Array<ResolversTypes['Organization']>>, ParentType, ContextType>;
+  resolvertest?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType>;
   servicesByDep?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, RequireFields<QueryServicesByDepArgs, 'cod'>>;
   specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType>;

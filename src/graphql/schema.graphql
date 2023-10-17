@@ -216,8 +216,8 @@ type Query {
   services: [Service!]
   units: [Unit!]
   specialties: [Specialty!]
+  resolvertest: String
   organizations: [Organization!]
-  gabriel: [Specialty]
   departmentById(id: ObjectId): Department
   departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
