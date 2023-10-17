@@ -1,4 +1,10 @@
 scalar Date
+scalar ObjectId
+
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
 
 type Period {
   start: Date
@@ -73,8 +79,31 @@ type ExtendedContactDetail {
   period: Period
 }
 
-type Department {
-  _id: ID!
+interface Organization {
+  _id: ObjectId
+  ID_CP: String
+  VIG_INI: Date
+  VIG_FIM: Date
+  UH: String
+  CR: String
+  identifier: Identifier
+  active: Boolean
+  type: CodeableConcept
+  name: String
+  alias: String
+  description: String
+  contact: ExtendedContactDetail
+  partOf: Reference
+  endpoint: Reference
+  AGREGA1: String
+  AGREGA2: String
+  AGREGA3: String
+  DES_DEPARTAMENTO: String
+  COD_DEPARTAMENTO: Int
+}
+
+type Department implements Organization {
+  _id: ObjectId
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
@@ -98,8 +127,8 @@ type Department {
   COD_DEPARTAMENTO: Int
 }
 
-type Service {
-  _id: ID!
+type Service implements Organization {
+  _id: ObjectId
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
@@ -125,8 +154,8 @@ type Service {
   COD_SERVICO: Int
 }
 
-type Unit {
-  _id: ID!
+type Unit implements Organization {
+  _id: ObjectId
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
@@ -153,8 +182,8 @@ type Unit {
   COD_UNIDADE: Int
 }
 
-type Specialty {
-  _id: ID!
+type Specialty implements Organization {
+  _id: ObjectId
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
@@ -183,11 +212,20 @@ type Specialty {
 }
 
 type Query {
-  departments: [Department]
-  services: [Service]
-  units: [Unit]
-  specialties: [Specialty]
-  departmentById(id: ID!): Department
+  departments: [Department!]
+  services: [Service!]
+  units: [Unit!]
+  specialties: [Specialty!]
+  resolvertest: String
+  organizations: [Organization!]
+  departmentById(id: ObjectId): Department
   departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
+  servicesByDep(cod: Int!): [Service!]
 }
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+  inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION

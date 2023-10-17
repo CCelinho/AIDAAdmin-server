@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "compile": "npx tsc",
-    "dev": "concurrently \"tsc -w\" \"nodemon --experimental-specifier-resolution=node -q dist/server.js\"",
+    "dev": "concurrently \"tsc -w\" \"nodemon --experimental-specifier-resolution=node -q dist/src/server.js\"",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "codegen": "graphql-codegen --config ./codegen.ts"
+    "codegen": "graphql-codegen --config ./src/codegen.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.7.1",
@@ -42,9 +42,9 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.45.0",
-    "node-cron": "^3.0.2",
     "eslint-config-prettier": "^8.8.0",
+    "node-cron": "^3.0.2",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.11"
   }
 }

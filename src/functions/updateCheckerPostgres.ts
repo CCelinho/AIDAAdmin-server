@@ -1,6 +1,6 @@
 // Imports
 import { readFileSync } from 'fs';
-import * as pg from 'pg';
+import pg from 'pg';
 import 'dotenv/config';
 
 // Modules
