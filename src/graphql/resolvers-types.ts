@@ -153,7 +153,6 @@ export type Query = {
   departmentById?: Maybe<Department>;
   departments?: Maybe<Array<Department>>;
   organizations?: Maybe<Array<Organization>>;
-  resolvertest?: Maybe<Scalars['String']['output']>;
   services?: Maybe<Array<Service>>;
   servicesByDep?: Maybe<Array<Service>>;
   specialties?: Maybe<Array<Specialty>>;
@@ -162,7 +161,7 @@ export type Query = {
 
 
 export type QueryDepartmentByCodArgs = {
-  cod: Scalars['Int']['input'];
+  cod?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -176,8 +175,38 @@ export type QueryDepartmentByIdArgs = {
 };
 
 
+export type QueryDepartmentsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryOrganizationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryServicesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryServicesByDepArgs = {
-  cod: Scalars['Int']['input'];
+  cod?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerySpecialtiesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryUnitsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Reference = {
@@ -538,16 +567,15 @@ export type PeriodResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  departmentByCOD?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByCodArgs, 'cod'>>;
+  departmentByCOD?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, Partial<QueryDepartmentByCodArgs>>;
   departmentByDES?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByDesArgs, 'des'>>;
   departmentById?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, Partial<QueryDepartmentByIdArgs>>;
-  departments?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType>;
-  organizations?: Resolver<Maybe<Array<ResolversTypes['Organization']>>, ParentType, ContextType>;
-  resolvertest?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType>;
-  servicesByDep?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, RequireFields<QueryServicesByDepArgs, 'cod'>>;
-  specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType>;
-  units?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType>;
+  departments?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType, Partial<QueryDepartmentsArgs>>;
+  organizations?: Resolver<Maybe<Array<ResolversTypes['Organization']>>, ParentType, ContextType, Partial<QueryOrganizationsArgs>>;
+  services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesArgs>>;
+  servicesByDep?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesByDepArgs>>;
+  specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType, Partial<QuerySpecialtiesArgs>>;
+  units?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType, Partial<QueryUnitsArgs>>;
 };
 
 export type ReferenceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Reference'] = ResolversParentTypes['Reference']> = {

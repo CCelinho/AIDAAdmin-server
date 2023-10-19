@@ -20,25 +20,55 @@ export const resolvers: Resolvers = {
     },
   },
   Query: {
-    departments: async () => {
-      return await department.find({ active: true });
+    departments: async (_, { offset, limit }) => {
+      let query = department.find({ active: true });
+      offset && query.skip(offset);
+      limit && query.limit(limit);
+      try {
+        const result = query.exec();
+        return await result;
+      } catch {
+        throw new Error('No departments found');
+      }
     },
-    services: async () => {
-      return await service.find({ active: true });
+    services: async (_, { offset, limit }) => {
+      let query = service.find({ active: true });
+      offset && query.skip(offset);
+      limit && query.limit(limit);
+      try {
+        const result = query.exec();
+        return await result;
+      } catch {
+        throw new Error('No services found');
+      }
     },
-    units: async () => {
-      return await unit.find({ active: true });
+    units: async (_, { offset, limit }) => {
+      let query = unit.find({ active: true });
+      offset && query.skip(offset);
+      limit && query.limit(limit);
+      try {
+        const result = query.exec();
+        return await result;
+      } catch {
+        throw new Error('No units found');
+      }
     },
-    specialties: async () => {
-      return await specialty.find({ active: true });
+    specialties: async (_, { offset, limit }) => {
+      let query = specialty.find({ active: true });
+      offset && query.skip(offset);
+      limit && query.limit(limit);
+      try {
+        const result = query.exec();
+        return await result;
+      } catch {
+        throw new Error('No specialties found');
+      }
     },
     organizations: async () => {
       const departments = await department.find({ active: true });
       const services = await service.find({ active: true });
       const units = await unit.find({ active: true });
       const specialties = await specialty.find({ active: true });
-
-      console.log(departments);
 
       const mergedResults: Organization[] = [
         ...departments,
