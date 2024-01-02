@@ -79,7 +79,7 @@ const formatUnit = async () => {
           $first: '$VIG_FIM',
         },
         UH: {
-          $first: '$UH',
+          $addToSet: '$UH',
         },
         CR: {
           $first: '$CR',

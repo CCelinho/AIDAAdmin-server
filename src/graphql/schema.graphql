@@ -84,6 +84,26 @@ interface Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
+  CR: String
+  identifier: Identifier
+  active: Boolean
+  type: CodeableConcept
+  name: String
+  alias: String
+  description: String
+  contact: ExtendedContactDetail
+  partOf: Reference
+  endpoint: Reference
+  AGREGA1: String
+  AGREGA2: String
+  AGREGA3: String
+}
+
+type UH implements Organization {
+  _id: ObjectId
+  ID_CP: String
+  VIG_INI: Date
+  VIG_FIM: Date
   UH: String
   CR: String
   identifier: Identifier
@@ -98,8 +118,8 @@ interface Organization {
   AGREGA1: String
   AGREGA2: String
   AGREGA3: String
-  DES_DEPARTAMENTO: String
-  COD_DEPARTAMENTO: Int
+  COD_ESTATISTICO: [String]
+  CHILDREN: [Int]
 }
 
 type Department implements Organization {
@@ -107,7 +127,7 @@ type Department implements Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
-  UH: String
+  UH: [String]
   CR: String
   identifier: Identifier
   active: Boolean
@@ -132,7 +152,7 @@ type Service implements Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
-  UH: String
+  UH: [String]
   CR: String
   identifier: Identifier
   active: Boolean
@@ -159,7 +179,7 @@ type Unit implements Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
-  UH: String
+  UH: [String]
   CR: String
   identifier: Identifier
   active: Boolean
@@ -220,7 +240,8 @@ type Query {
   departmentById(id: ObjectId): Department
   departmentByCOD(cod: Int): Department
   departmentByDES(des: String!): Department
-  servicesByDep(cod: Int): [Service!]
+  servicesByDep(offset: Int, limit: Int, cod: Int): [Service!]
+  departmentSearch(searchString: String!): [Department!]
 }
 
 directive @cacheControl(

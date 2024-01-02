@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 export const collectionNames = {
+  uh: 'uh',
   dept: 'dep',
   serv: 'ser',
   unit: 'uni',

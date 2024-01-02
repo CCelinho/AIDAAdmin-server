@@ -81,7 +81,6 @@ const organizationSchema = new mongoose.Schema({
   ID_CP: { type: String },
   VIG_INI: { type: Date },
   VIG_FIM: { type: Date },
-  UH: { type: String },
   CR: { type: String },
   identifier: { type: identifierSchema },
   active: { type: Boolean },
@@ -98,9 +97,19 @@ const organizationSchema = new mongoose.Schema({
   COD_ESTATISTICO: [{ type: String }],
 });
 
+const uhSchema = extendSchema(
+  organizationSchema,
+  {
+    UH: [{ type: String }],
+    CHILDREN: [{ type: Number }],
+  },
+  { collection: cn.uh }
+);
+
 const departmentSchema = extendSchema(
   organizationSchema,
   {
+    UH: [{ type: String }],
     CHILDREN: [{ type: Number }],
     DES_DEPARTAMENTO: { type: String },
     COD_DEPARTAMENTO: { type: Number },
@@ -111,6 +120,7 @@ const departmentSchema = extendSchema(
 const serviceSchema = extendSchema(
   organizationSchema,
   {
+    UH: [{ type: String }],
     CHILDREN: [{ type: Number }],
     COD_SERVICO: { type: Number },
     DES_SERVICO: { type: String },
@@ -123,6 +133,7 @@ const serviceSchema = extendSchema(
 const unitSchema = extendSchema(
   organizationSchema,
   {
+    UH: [{ type: String }],
     COD_UNIDADE: { type: Number },
     DES_UNIDADE: { type: String },
     COD_SERVICO: { type: Number },
@@ -136,6 +147,7 @@ const unitSchema = extendSchema(
 const specialtySchema = extendSchema(
   organizationSchema,
   {
+    UH: { type: String },
     COD_ESTATISTICO: { type: String },
     DES_ESTATISTICO: { type: String },
     COD_UNIDADE: { type: Number },
@@ -189,6 +201,7 @@ type unit = InferSchemaType<typeof unitSchema>;
 type specialty = InferSchemaType<typeof specialtySchema>;
 type contactData = InferSchemaType<typeof contactDataSchema>;
 
+export const uh = mongoose.model('uh', uhSchema);
 export const department = mongoose.model('department', departmentSchema);
 export const service = mongoose.model('service', serviceSchema);
 export const unit = mongoose.model('unit', unitSchema);

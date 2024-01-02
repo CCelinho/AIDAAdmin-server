@@ -25,7 +25,7 @@ export const resolvers: Resolvers = {
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
-        const result = query.exec();
+        const result = query.sort('COD_DEPARTAMENTO').exec();
         return await result;
       } catch {
         throw new Error('No departments found');
@@ -36,7 +36,7 @@ export const resolvers: Resolvers = {
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
-        const result = query.exec();
+        const result = query.sort('COD_SERVICO').exec();
         return await result;
       } catch {
         throw new Error('No services found');
@@ -83,7 +83,7 @@ export const resolvers: Resolvers = {
       try {
         const dep = await department.findById({ _id: id });
         return dep ? dep.toObject() : null;
-      } catch (error) {
+      } catch {
         throw new Error('Department not found: ' + id);
       }
     },
@@ -91,7 +91,7 @@ export const resolvers: Resolvers = {
       try {
         const dep = await department.findOne({ COD_DEPARTAMENTO: cod });
         return dep ? dep.toObject() : null;
-      } catch (error) {
+      } catch {
         throw new Error('Department not found');
       }
     },
@@ -99,12 +99,33 @@ export const resolvers: Resolvers = {
       try {
         const dep = await department.findOne({ DES_DEPARTAMENTO: des });
         return dep ? dep.toObject() : null;
-      } catch (error) {
+      } catch {
         throw new Error('Department not found');
       }
     },
-    servicesByDep: async (_, { cod }) => {
-      return await service.find({ COD_DEPARTAMENTO: cod });
+    departmentSearch: async (_, { searchString }) => {
+      try {
+        const deps = await department.find({
+          $or: [
+            { DES_DEPARTAMENTO: { $regex: searchString, $options: 'i' } },
+            { 'partOf.display': { $regex: searchString, $options: 'i' } },
+          ],
+        });
+        return deps;
+      } catch {
+        throw new Error('No departments found');
+      }
+    },
+    servicesByDep: async (_, { cod, offset, limit }) => {
+      let query = service.find({ COD_DEPARTAMENTO: { $in: cod } });
+      offset && query.skip(offset);
+      limit && query.limit(limit);
+      try {
+        const result = query.exec();
+        return await result;
+      } catch {
+        throw new Error('No services found' + cod);
+      }
     },
   },
 };
