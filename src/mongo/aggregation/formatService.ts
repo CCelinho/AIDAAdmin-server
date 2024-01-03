@@ -15,7 +15,7 @@ const formatService = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'uni',
+            from: collectionNames.unit,
             localField: 'COD_SERVICO',
             foreignField: 'COD_SERVICO',
             as: 'result',
@@ -62,7 +62,7 @@ const formatService = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'spe',
+            from: collectionNames.spec,
             localField: 'COD_SERVICO',
             foreignField: 'COD_SERVICO',
             as: 'result',
@@ -124,7 +124,11 @@ const formatService = async () => {
           },
       },
       {
-        $out: collectionNames.serv,
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.serv,
       },
     ])
     .exec()
@@ -211,7 +215,11 @@ const formatService = async () => {
           '_id',
       },
       {
-        $out: collectionNames.dept,
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.dept,
       },
     ])
     .exec()
@@ -219,7 +227,7 @@ const formatService = async () => {
 
   await service.aggregate([
     {
-      $merge: { into: 'orgs' },
+      $merge: { into: collectionNames.all },
     },
   ]);
 };

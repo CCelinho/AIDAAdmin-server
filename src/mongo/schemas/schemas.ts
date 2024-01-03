@@ -2,6 +2,23 @@ import mongoose, { InferSchemaType } from 'mongoose';
 import { collectionNames as cn } from '../../constants';
 import extendSchema from './schemaExtender';
 
+// const UHDepRelSchema = new mongoose.Schema({
+//   type: { type: Number
+//            enum: [1, 2, 3, 4]}
+//   parent: { type: String },
+//   child: { type: Number },
+// });
+
+// const UniSpeRelSchema = new mongoose.Schema({
+//   parent: { type: Number },
+//   child: { type: String },
+// });
+
+// const partyRelSchema = new mongoose.Schema({
+//   parent: { type: Number },
+//   child: { type: Number },
+// });
+
 const periodSchema = new mongoose.Schema({
   start: { type: Date },
   end: { type: Date },

@@ -15,7 +15,7 @@ const formatSpecialty = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'contacts',
+            from: collectionNames.contacts,
             localField: 'COD_ESTATISTICO',
             foreignField: 'COD_ESTATISTICO',
             as: 'result',
@@ -187,7 +187,11 @@ const formatSpecialty = async () => {
           },
       },
       {
-        $out: collectionNames.spec,
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.spec,
       },
     ])
     .exec()
@@ -279,14 +283,20 @@ const formatSpecialty = async () => {
            */
           '_id',
       },
-      { $out: collectionNames.unit },
+      {
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.unit,
+      },
     ])
     .exec()
     .catch((err) => console.log(err));
 
   await specialty.aggregate([
     {
-      $out: 'orgs',
+      $out: collectionNames.all,
     },
   ]);
 };

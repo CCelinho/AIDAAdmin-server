@@ -15,7 +15,7 @@ const formatUH = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'spe',
+            from: collectionNames.spec,
             localField: 'UH',
             foreignField: 'UH',
             as: 'result',
@@ -87,7 +87,7 @@ const formatUH = async () => {
 
   await uh.aggregate([
     {
-      $merge: { into: 'orgs' },
+      $merge: { into: collectionNames.all },
     },
   ]);
 };

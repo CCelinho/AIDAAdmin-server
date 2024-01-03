@@ -15,7 +15,7 @@ const formatDepartment = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'ser',
+            from: collectionNames.serv,
             localField: 'COD_DEPARTAMENTO',
             foreignField: 'COD_DEPARTAMENTO',
             as: 'CHILDREN',
@@ -59,7 +59,7 @@ const formatDepartment = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'spe',
+            from: collectionNames.spec,
             localField: 'COD_DEPARTAMENTO',
             foreignField: 'COD_DEPARTAMENTO',
             as: 'COD_ESTATISTICO',
@@ -119,11 +119,16 @@ const formatDepartment = async () => {
           },
       },
       {
-        $out: collectionNames.dept,
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.dept,
       },
     ])
     .exec()
     .catch((err) => console.log(err));
+
   await department
     .aggregate([
       {
@@ -193,7 +198,14 @@ const formatDepartment = async () => {
             },
           },
       },
-      { $unset: '_id' },
+      {
+        $unset:
+          /**
+           * Provide the field name to exclude.
+           * To exclude multiple fields, pass the field names in an array.
+           */
+          '_id',
+      },
       {
         $out:
           /**
@@ -207,7 +219,7 @@ const formatDepartment = async () => {
 
   await department.aggregate([
     {
-      $merge: { into: 'orgs' },
+      $merge: { into: collectionNames.all },
     },
   ]);
 };

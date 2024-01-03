@@ -11,11 +11,13 @@ import {
   unit,
   service,
   department,
+  uh,
 } from '../mongo/schemas/schemas';
 import formatSpecialty from '../mongo/aggregation/formatSpecialty';
 import formatUnit from '../mongo/aggregation/formatUnit';
 import formatService from '../mongo/aggregation/formatService';
 import formatDepartment from '../mongo/aggregation/formatDepartment';
+import formatUH from '../mongo/aggregation/formatUH';
 
 export const checkForUpdates = async (lastCheckTimestamp: string) => {
   console.log('Last check for updates: ' + lastCheckTimestamp);
@@ -69,11 +71,13 @@ export const checkForUpdates = async (lastCheckTimestamp: string) => {
       await formatUnit();
       await formatService();
       await formatDepartment();
+      await formatUH();
 
       const speCount = await specialty.countDocuments();
       const uniCount = await unit.countDocuments();
       const serCount = await service.countDocuments();
       const depCount = await department.countDocuments();
+      const UHCount = await uh.countDocuments();
 
       console.log(
         'Document count:\n' +
@@ -83,7 +87,9 @@ export const checkForUpdates = async (lastCheckTimestamp: string) => {
           '\n' +
           serCount +
           '\n' +
-          depCount
+          depCount +
+          '\n' +
+          UHCount
       );
     } else {
       console.log('No updates found.');
