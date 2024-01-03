@@ -87,6 +87,41 @@ const formatUH = async () => {
 
   await uh.aggregate([
     {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$CHILDREN',
+        },
+    },
+    {
+      $project: {
+        _id: 0,
+        parent: '$UH',
+        child: '$CHILDREN',
+      },
+    },
+    {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          type: 4,
+        },
+    },
+    {
+      $merge: { into: 'rels' },
+    },
+  ]);
+
+  await uh.aggregate([
+    {
       $merge: { into: collectionNames.all },
     },
   ]);

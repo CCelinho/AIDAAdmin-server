@@ -8,6 +8,7 @@ export const collectionNames = {
   spec: 'spe',
   contacts: 'contacts',
   all: 'orgs',
+  rels: 'rels',
 };
 
 export const postgresUpdateQuery =

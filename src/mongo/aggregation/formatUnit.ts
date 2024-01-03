@@ -181,6 +181,45 @@ const formatUnit = async () => {
 
   await unit.aggregate([
     {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$COD_ESTATISTICO',
+        },
+    },
+    {
+      $project: {
+        _id: 0,
+        parent: '$COD_UNIDADE',
+        child: '$COD_ESTATISTICO',
+      },
+    },
+    {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          type: 1,
+        },
+    },
+    {
+      $out:
+        /**
+         * Provide the name of the output collection.
+         */
+        collectionNames.rels,
+    },
+  ]);
+
+  await unit.aggregate([
+    {
       $merge: { into: collectionNames.all },
     },
   ]);

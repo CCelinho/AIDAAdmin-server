@@ -219,6 +219,41 @@ const formatDepartment = async () => {
 
   await department.aggregate([
     {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$CHILDREN',
+        },
+    },
+    {
+      $project: {
+        _id: 0,
+        parent: '$COD_DEPARTAMENTO',
+        child: '$CHILDREN',
+      },
+    },
+    {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          type: 3,
+        },
+    },
+    {
+      $merge: { into: collectionNames.rels },
+    },
+  ]);
+
+  await department.aggregate([
+    {
       $merge: { into: collectionNames.all },
     },
   ]);
