@@ -193,92 +193,101 @@ const formatSpecialty = async () => {
     .exec()
     .catch((err) => console.log(err));
 
+  await specialty
+    .aggregate([
+      {
+        $group:
+          /**
+           * _id: The id of the group.
+           * fieldN: The first field name.
+           */
+          {
+            _id: '$COD_UNIDADE',
+            ID_CP: {
+              $first: '$ID_CP',
+            },
+            VIG_INI: {
+              $first: '$VIG_INI',
+            },
+            VIG_FIM: {
+              $first: '$VIG_FIM',
+            },
+            UH: {
+              $addToSet: '$UH',
+            },
+            CR: {
+              $first: '$CR',
+            },
+            COD_DEPARTAMENTO: {
+              $first: '$COD_DEPARTAMENTO',
+            },
+            DES_DEPARTAMENTO: {
+              $first: '$DES_DEPARTAMENTO',
+            },
+            COD_SERVICO: {
+              $first: '$COD_SERVICO',
+            },
+            DES_SERVICO: {
+              $first: '$DES_SERVICO',
+            },
+            COD_UNIDADE: {
+              $first: '$COD_UNIDADE',
+            },
+            DES_UNIDADE: {
+              $first: '$DES_UNIDADE',
+            },
+            COD_ESTATISTICO: {
+              $first: '$COD_ESTATISTICO',
+            },
+            DES_ESTATISTICO: {
+              $first: '$DES_ESTATISTICO',
+            },
+            identifier: {
+              $first: '$identifier',
+            },
+            active: {
+              $first: '$active',
+            },
+            type: {
+              $first: '$type',
+            },
+            name: {
+              $first: '$name',
+            },
+            contact: {
+              $first: '$contact',
+            },
+            partOf: {
+              $first: '$partOf',
+            },
+            endpoint: {
+              $first: '$endpoint',
+            },
+            alias: {
+              $first: '$alias',
+            },
+            description: {
+              $first: '$description',
+            },
+          },
+      },
+      {
+        $unset:
+          /**
+           * Provide the field name to exclude.
+           * To exclude multiple fields, pass the field names in an array.
+           */
+          '_id',
+      },
+      { $out: collectionNames.unit },
+    ])
+    .exec()
+    .catch((err) => console.log(err));
+
   await specialty.aggregate([
     {
-      $group:
-        /**
-         * _id: The id of the group.
-         * fieldN: The first field name.
-         */
-        {
-          _id: '$COD_UNIDADE',
-          ID_CP: {
-            $first: '$ID_CP',
-          },
-          VIG_INI: {
-            $first: '$VIG_INI',
-          },
-          VIG_FIM: {
-            $first: '$VIG_FIM',
-          },
-          UH: {
-            $addToSet: '$UH',
-          },
-          CR: {
-            $first: '$CR',
-          },
-          COD_DEPARTAMENTO: {
-            $first: '$COD_DEPARTAMENTO',
-          },
-          DES_DEPARTAMENTO: {
-            $first: '$DES_DEPARTAMENTO',
-          },
-          COD_SERVICO: {
-            $first: '$COD_SERVICO',
-          },
-          DES_SERVICO: {
-            $first: '$DES_SERVICO',
-          },
-          COD_UNIDADE: {
-            $first: '$COD_UNIDADE',
-          },
-          DES_UNIDADE: {
-            $first: '$DES_UNIDADE',
-          },
-          COD_ESTATISTICO: {
-            $first: '$COD_ESTATISTICO',
-          },
-          DES_ESTATISTICO: {
-            $first: '$DES_ESTATISTICO',
-          },
-          identifier: {
-            $first: '$identifier',
-          },
-          active: {
-            $first: '$active',
-          },
-          type: {
-            $first: '$type',
-          },
-          name: {
-            $first: '$name',
-          },
-          contact: {
-            $first: '$contact',
-          },
-          partOf: {
-            $first: '$partOf',
-          },
-          endpoint: {
-            $first: '$endpoint',
-          },
-          alias: {
-            $first: '$alias',
-          },
-          description: {
-            $first: '$description',
-          },
-        },
+      $out: 'orgs',
     },
-    {
-      $unset:
-        /**
-         * Provide the field name to exclude.
-         * To exclude multiple fields, pass the field names in an array.
-         */
-        '_id',
-    },
-    { $out: collectionNames.unit },
   ]);
 };
 

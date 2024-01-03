@@ -131,6 +131,12 @@ const formatUnit = async () => {
     { $unset: '_id' },
     { $out: collectionNames.serv },
   ]);
+
+  await unit.aggregate([
+    {
+      $merge: { into: 'orgs' },
+    },
+  ]);
 };
 
 export default formatUnit;

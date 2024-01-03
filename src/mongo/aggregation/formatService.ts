@@ -216,6 +216,12 @@ const formatService = async () => {
     ])
     .exec()
     .catch((err) => console.log(err));
+
+  await service.aggregate([
+    {
+      $merge: { into: 'orgs' },
+    },
+  ]);
 };
 
 export default formatService;
