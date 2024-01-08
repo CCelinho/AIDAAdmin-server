@@ -1,23 +1,6 @@
 import mongoose, { InferSchemaType } from 'mongoose';
-import { collectionNames as cn } from '../../constants';
+import { collectionNames as cn, collectionNames } from '../../constants';
 import extendSchema from './schemaExtender';
-
-// const UHDepRelSchema = new mongoose.Schema({
-//   type: { type: Number
-//            enum: [1, 2, 3, 4]}
-//   parent: { type: String },
-//   child: { type: Number },
-// });
-
-// const UniSpeRelSchema = new mongoose.Schema({
-//   parent: { type: Number },
-//   child: { type: String },
-// });
-
-// const partyRelSchema = new mongoose.Schema({
-//   parent: { type: Number },
-//   child: { type: Number },
-// });
 
 const periodSchema = new mongoose.Schema({
   start: { type: Date },
@@ -94,48 +77,49 @@ const extendedContactDetailSchema = new mongoose.Schema({
 });
 
 // Organizations
-const organizationSchema = new mongoose.Schema({
-  ID_CP: { type: String },
-  VIG_INI: { type: Date },
-  VIG_FIM: { type: Date },
-  CR: { type: String },
-  identifier: { type: identifierSchema },
-  active: { type: Boolean },
-  type: { type: codeableConceptSchema },
-  name: { type: String },
-  alias: { type: String },
-  description: { type: String },
-  contact: [{ type: extendedContactDetailSchema }],
-  partOf: { type: referenceSchema },
-  endpoint: { type: referenceSchema },
-  AGREGA1: { type: String },
-  AGREGA2: { type: String },
-  AGREGA3: { type: String },
-  COD_ESTATISTICO: [{ type: String }],
-});
+const baseSchema = new mongoose.Schema(
+  {
+    ID_CP: { type: String },
+    VIG_INI: { type: Date },
+    VIG_FIM: { type: Date },
+    CR: { type: String },
+    identifier: { type: identifierSchema },
+    active: { type: Boolean },
+    type: { type: codeableConceptSchema },
+    name: { type: String },
+    alias: { type: String },
+    description: { type: String },
+    contact: [{ type: extendedContactDetailSchema }],
+    partOf: { type: referenceSchema },
+    endpoint: { type: referenceSchema },
+  },
+  { collection: collectionNames.all }
+);
 
-const uhSchema = extendSchema(
-  organizationSchema,
+export const uhospSchema = extendSchema(
+  baseSchema,
   {
     UH: [{ type: String }],
     CHILDREN: [{ type: Number }],
+    COD_ESTATISTICO: [{ type: String }],
   },
   { collection: cn.uh }
 );
 
-const departmentSchema = extendSchema(
-  organizationSchema,
+export const departmentSchema = extendSchema(
+  baseSchema,
   {
     UH: [{ type: String }],
     CHILDREN: [{ type: Number }],
     DES_DEPARTAMENTO: { type: String },
     COD_DEPARTAMENTO: { type: Number },
+    COD_ESTATISTICO: [{ type: String }],
   },
   { collection: cn.dept }
 );
 
-const serviceSchema = extendSchema(
-  organizationSchema,
+export const serviceSchema = extendSchema(
+  baseSchema,
   {
     UH: [{ type: String }],
     CHILDREN: [{ type: Number }],
@@ -143,12 +127,13 @@ const serviceSchema = extendSchema(
     DES_SERVICO: { type: String },
     DES_DEPARTAMENTO: { type: String },
     COD_DEPARTAMENTO: { type: Number },
+    COD_ESTATISTICO: [{ type: String }],
   },
   { collection: cn.serv }
 );
 
-const unitSchema = extendSchema(
-  organizationSchema,
+export const uniSchema = extendSchema(
+  baseSchema,
   {
     UH: [{ type: String }],
     COD_UNIDADE: { type: Number },
@@ -157,12 +142,13 @@ const unitSchema = extendSchema(
     DES_SERVICO: { type: String },
     DES_DEPARTAMENTO: { type: String },
     COD_DEPARTAMENTO: { type: Number },
+    COD_ESTATISTICO: [{ type: String }],
   },
   { collection: cn.unit }
 );
 
-const specialtySchema = extendSchema(
-  organizationSchema,
+export const specialtySchema = extendSchema(
+  baseSchema,
   {
     UH: { type: String },
     COD_ESTATISTICO: { type: String },
@@ -173,8 +159,20 @@ const specialtySchema = extendSchema(
     DES_SERVICO: { type: String },
     DES_DEPARTAMENTO: { type: String },
     COD_DEPARTAMENTO: { type: Number },
+    AGREGA1: { type: String },
+    AGREGA2: { type: String },
+    AGREGA3: { type: String },
   },
   { collection: cn.spec }
+);
+
+const relationshipSchema = new mongoose.Schema(
+  {
+    parent: { type: mongoose.Types.ObjectId },
+    child: { type: mongoose.Types.ObjectId },
+    type: { type: Number },
+  },
+  { collection: cn.rels }
 );
 
 const contactDataSchema = new mongoose.Schema(
@@ -207,20 +205,62 @@ const contactDataSchema = new mongoose.Schema(
     active_start: { type: Date },
     active_end: { type: Date },
   },
-  { collection: 'contacts' }
+  { collection: cn.contacts }
 );
+
+export const uhSchema = new mongoose.Schema({
+  UH: [{ type: String }],
+  CHILDREN: [{ type: Number }],
+  COD_ESTATISTICO: [{ type: String }],
+});
+
+export const deptSchema = new mongoose.Schema({
+  CHILDREN: [{ type: Number }],
+  DES_DEPARTAMENTO: { type: String },
+  COD_DEPARTAMENTO: { type: Number },
+  COD_ESTATISTICO: [{ type: String }],
+});
+
+export const servSchema = new mongoose.Schema({
+  CHILDREN: [{ type: Number }],
+  COD_SERVICO: { type: Number },
+  DES_SERVICO: { type: String },
+  COD_ESTATISTICO: [{ type: String }],
+});
+
+export const unitSchema = new mongoose.Schema({
+  COD_UNIDADE: { type: Number },
+  DES_UNIDADE: { type: String },
+  COD_ESTATISTICO: [{ type: String }],
+});
+
+export const specSchema = new mongoose.Schema({
+  COD_ESTATISTICO: { type: String },
+  DES_ESTATISTICO: { type: String },
+  AGREGA1: { type: String },
+  AGREGA2: { type: String },
+  AGREGA3: { type: String },
+});
 
 export type identifier = InferSchemaType<typeof identifierSchema>;
 
-type department = InferSchemaType<typeof departmentSchema>;
-type service = InferSchemaType<typeof serviceSchema>;
-type unit = InferSchemaType<typeof unitSchema>;
-type specialty = InferSchemaType<typeof specialtySchema>;
-type contactData = InferSchemaType<typeof contactDataSchema>;
-
-export const uh = mongoose.model('uh', uhSchema);
+export const base = mongoose.model('base', baseSchema);
+export const uhosp = mongoose.model('uhosp', uhospSchema);
 export const department = mongoose.model('department', departmentSchema);
 export const service = mongoose.model('service', serviceSchema);
-export const unit = mongoose.model('unit', unitSchema);
+export const uni = mongoose.model('uni', uniSchema);
 export const specialty = mongoose.model('specialty', specialtySchema);
 export const contactData = mongoose.model('contacts', contactDataSchema);
+export const relationship = mongoose.model('relationship', relationshipSchema);
+
+type uh = InferSchemaType<typeof uhospSchema>;
+type dept = InferSchemaType<typeof departmentSchema>;
+type serv = InferSchemaType<typeof serviceSchema>;
+type unit = InferSchemaType<typeof uniSchema>;
+type spec = InferSchemaType<typeof specialtySchema>;
+
+export const uh = base.discriminator('uh', uhSchema);
+export const dept = base.discriminator('dept', deptSchema);
+export const unit = base.discriminator('unit', unitSchema);
+export const serv = base.discriminator('serv', servSchema);
+export const spec = base.discriminator('spec', specSchema);

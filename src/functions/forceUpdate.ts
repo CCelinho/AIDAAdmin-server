@@ -1,6 +1,6 @@
-import { mongoConnect } from './connections/mongoConnection';
-import { mongoCString } from './constants';
-import { checkForUpdates } from './functions/updateCheckerPostgres';
+import { mongoConnect } from '../connections/mongoConnection';
+import { mongoCString } from '../constants';
+import { checkForUpdates } from './updateCheckerPostgres';
 
 const forceUpdate = async () => {
   await mongoConnect(mongoCString);

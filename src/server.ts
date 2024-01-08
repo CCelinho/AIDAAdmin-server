@@ -12,7 +12,7 @@ import { resolvers } from './graphql/resolvers';
 import { checkForUpdates } from './functions/updateCheckerPostgres';
 import { mongoCString } from './constants';
 import { mongoConnect } from './connections/mongoConnection';
-import forceUpdate from './forceUpdate';
+import forceUpdate from './functions/forceUpdate';
 
 const app = express();
 const port = process.env.VITE_GRAPHQLPORT;

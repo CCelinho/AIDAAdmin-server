@@ -219,6 +219,16 @@ const formatDepartment = async () => {
 
   await department.aggregate([
     {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          parent: '$_id',
+        },
+    },
+    {
       $unwind:
         /**
          * path: Path to the array field.
@@ -231,10 +241,39 @@ const formatDepartment = async () => {
         },
     },
     {
+      $lookup:
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        {
+          from: collectionNames.serv,
+          localField: 'CHILDREN',
+          foreignField: 'COD_SERVICO',
+          as: 'child',
+        },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$child',
+        },
+    },
+    {
       $project: {
         _id: 0,
-        parent: '$COD_DEPARTAMENTO',
-        child: '$CHILDREN',
+        parent: '$parent',
+        child: '$child._id',
       },
     },
     {
@@ -248,11 +287,25 @@ const formatDepartment = async () => {
         },
     },
     {
-      $merge: { into: collectionNames.rels },
+      $merge:
+        /**
+         * Provide the name of the output collection.
+         */
+        {
+          into: collectionNames.rels,
+        },
     },
   ]);
 
   await department.aggregate([
+    {
+      $unset:
+        /**
+         * Provide the field name to exclude.
+         * To exclude multiple fields, pass the field names in an array.
+         */
+        'UH',
+    },
     {
       $merge: { into: collectionNames.all },
     },

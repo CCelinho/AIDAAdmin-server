@@ -1,8 +1,8 @@
-import { unit } from '../schemas/schemas';
+import { uni } from '../schemas/schemas';
 import { collectionNames } from '../../constants';
 
 const formatUnit = async () => {
-  await unit
+  await uni
     .aggregate([
       {
         $lookup:
@@ -79,7 +79,7 @@ const formatUnit = async () => {
     .exec()
     .catch((err) => console.log(err));
 
-  await unit
+  await uni
     .aggregate([
       {
         $unwind:
@@ -129,7 +129,7 @@ const formatUnit = async () => {
               $first: '$DES_SERVICO',
             },
             COD_ESTATISTICO: {
-              $first: '$COD_ESTATISTICO',
+              $addToSet: '$COD_ESTATISTICO',
             },
             identifier: {
               $first: '$identifier',
@@ -179,7 +179,17 @@ const formatUnit = async () => {
     .exec()
     .catch((err) => console.log(err));
 
-  await unit.aggregate([
+  await uni.aggregate([
+    {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          parent: '$_id',
+        },
+    },
     {
       $unwind:
         /**
@@ -193,10 +203,39 @@ const formatUnit = async () => {
         },
     },
     {
+      $lookup:
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        {
+          from: collectionNames.spec,
+          localField: 'COD_ESTATISTICO',
+          foreignField: 'COD_ESTATISTICO',
+          as: 'child',
+        },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$child',
+        },
+    },
+    {
       $project: {
         _id: 0,
-        parent: '$COD_UNIDADE',
-        child: '$COD_ESTATISTICO',
+        parent: '$parent',
+        child: '$child._id',
       },
     },
     {
@@ -218,7 +257,21 @@ const formatUnit = async () => {
     },
   ]);
 
-  await unit.aggregate([
+  await uni.aggregate([
+    {
+      $unset:
+        /**
+         * Provide the field name to exclude.
+         * To exclude multiple fields, pass the field names in an array.
+         */
+        [
+          'COD_DEPARTAMENTO',
+          'DES_DEPARTAMENTO',
+          'COD_SERVICO',
+          'DES_SERVICO',
+          'UH',
+        ],
+    },
     {
       $merge: { into: collectionNames.all },
     },

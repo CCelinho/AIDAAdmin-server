@@ -1,27 +1,42 @@
 import { Organization, Resolvers } from './resolvers-types';
-import { department, service, specialty, unit } from '../mongo/schemas/schemas';
+import { uh, dept, serv, spec, unit } from '../mongo/schemas/schemas';
 
 export const resolvers: Resolvers = {
   Organization: {
     __resolveType: (org) => {
-      if (org.type?.text === 'department') {
+      if (org.type?.coding?.code === 'dept') {
         return 'Department';
       }
-      if (org.type?.text === 'service') {
+      if (org.type?.coding?.code === 'serv') {
         return 'Service';
       }
-      if (org.type?.text === 'unit') {
+      if (org.type?.coding?.code === 'unit') {
         return 'Unit';
       }
-      if (org.type?.text === 'specialty') {
+      if (org.type?.coding?.code === 'spec') {
         return 'Specialty';
+      }
+      if (org.type?.coding?.code === 'uh') {
+        return 'UH';
       }
       return null;
     },
   },
   Query: {
+    uhs: async (_, { offset, limit }) => {
+      let query = uh.find({ active: true });
+      offset && query.skip(offset);
+      limit && query.limit(limit);
+      try {
+        const result = await query.sort('UH').exec();
+        return await result;
+      } catch {
+        throw new Error('No UH found');
+      }
+    },
+
     departments: async (_, { offset, limit }) => {
-      let query = department.find({ active: true });
+      let query = dept.find({ active: true });
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -32,7 +47,7 @@ export const resolvers: Resolvers = {
       }
     },
     services: async (_, { offset, limit }) => {
-      let query = service.find({ active: true });
+      let query = serv.find({ active: true });
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -54,7 +69,7 @@ export const resolvers: Resolvers = {
       }
     },
     specialties: async (_, { offset, limit }) => {
-      let query = specialty.find({ active: true });
+      let query = spec.find({ active: true });
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -65,10 +80,10 @@ export const resolvers: Resolvers = {
       }
     },
     organizations: async () => {
-      const departments = await department.find({ active: true });
-      const services = await service.find({ active: true });
+      const departments = await dept.find({ active: true });
+      const services = await serv.find({ active: true });
       const units = await unit.find({ active: true });
-      const specialties = await specialty.find({ active: true });
+      const specialties = await spec.find({ active: true });
 
       const mergedResults: Organization[] = [
         ...departments,
@@ -81,7 +96,7 @@ export const resolvers: Resolvers = {
     },
     departmentById: async (_, { id }) => {
       try {
-        const dep = await department.findById({ _id: id });
+        const dep = await dept.findById({ _id: id });
         return dep ? dep.toObject() : null;
       } catch {
         throw new Error('Department not found: ' + id);
@@ -89,7 +104,7 @@ export const resolvers: Resolvers = {
     },
     departmentByCOD: async (_, { cod }) => {
       try {
-        const dep = await department.findOne({ COD_DEPARTAMENTO: cod });
+        const dep = await dept.findOne({ COD_DEPARTAMENTO: cod });
         return dep ? dep.toObject() : null;
       } catch {
         throw new Error('Department not found');
@@ -97,7 +112,7 @@ export const resolvers: Resolvers = {
     },
     departmentByDES: async (_, { des }) => {
       try {
-        const dep = await department.findOne({ DES_DEPARTAMENTO: des });
+        const dep = await dept.findOne({ DES_DEPARTAMENTO: des });
         return dep ? dep.toObject() : null;
       } catch {
         throw new Error('Department not found');
@@ -105,7 +120,7 @@ export const resolvers: Resolvers = {
     },
     departmentSearch: async (_, { searchString }) => {
       try {
-        const deps = await department.find({
+        const deps = await dept.find({
           $or: [
             { DES_DEPARTAMENTO: { $regex: searchString, $options: 'i' } },
             { 'partOf.display': { $regex: searchString, $options: 'i' } },
@@ -117,7 +132,7 @@ export const resolvers: Resolvers = {
       }
     },
     servicesByDep: async (_, { cod, offset, limit }) => {
-      let query = service.find({ COD_DEPARTAMENTO: { $in: cod } });
+      let query = serv.find({ COD_DEPARTAMENTO: { $in: cod } });
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {

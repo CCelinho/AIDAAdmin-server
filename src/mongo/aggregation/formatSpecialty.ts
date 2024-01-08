@@ -243,9 +243,6 @@ const formatSpecialty = async () => {
             COD_ESTATISTICO: {
               $first: '$COD_ESTATISTICO',
             },
-            DES_ESTATISTICO: {
-              $first: '$DES_ESTATISTICO',
-            },
             identifier: {
               $first: '$identifier',
             },
@@ -295,6 +292,22 @@ const formatSpecialty = async () => {
     .catch((err) => console.log(err));
 
   await specialty.aggregate([
+    {
+      $unset:
+        /**
+         * Provide the field name to exclude.
+         * To exclude multiple fields, pass the field names in an array.
+         */
+        [
+          'COD_DEPARTAMENTO',
+          'DES_DEPARTAMENTO',
+          'COD_SERVICO',
+          'DES_SERVICO',
+          'COD_UNIDADE',
+          'DES_UNIDADE',
+          'UH',
+        ],
+    },
     {
       $out: collectionNames.all,
     },
