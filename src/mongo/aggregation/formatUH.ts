@@ -1,8 +1,8 @@
-import { uh } from '../schemas/schemas';
+import { uhosp } from '../schemas/schemas';
 import { collectionNames } from '../../constants';
 
 const formatUH = async () => {
-  await uh
+  await uhosp
     .aggregate([
       {
         $lookup:
@@ -15,7 +15,7 @@ const formatUH = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'spe',
+            from: collectionNames.spec,
             localField: 'UH',
             foreignField: 'UH',
             as: 'result',
@@ -64,6 +64,7 @@ const formatUH = async () => {
               },
               text: 'uh',
             },
+            __t: 'uh',
           },
       },
       {
@@ -85,9 +86,90 @@ const formatUH = async () => {
     .exec()
     .catch((err) => console.log(err));
 
-  await uh.aggregate([
+  await uhosp.aggregate([
     {
-      $merge: { into: 'orgs' },
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          parent: '$_id',
+        },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$CHILDREN',
+        },
+    },
+    {
+      $lookup:
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        {
+          from: collectionNames.dept,
+          localField: 'CHILDREN',
+          foreignField: 'COD_DEPARTAMENTO',
+          as: 'child',
+        },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$child',
+        },
+    },
+    {
+      $project: {
+        _id: 0,
+        parent: '$parent',
+        child: '$child._id',
+      },
+    },
+    {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          type: 4,
+        },
+    },
+    {
+      $merge:
+        /**
+         * Provide the name of the output collection.
+         */
+        {
+          into: collectionNames.rels,
+        },
+    },
+  ]);
+
+  await uhosp.aggregate([
+    { $unset: 'CHILDREN' },
+    {
+      $merge: { into: collectionNames.all },
     },
   ]);
 };

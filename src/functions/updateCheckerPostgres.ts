@@ -8,14 +8,17 @@ import { pgConfig, postgresUpdateQuery } from '../constants';
 import {
   contactData,
   specialty,
-  unit,
+  uni,
   service,
   department,
+  uhosp,
+  base,
 } from '../mongo/schemas/schemas';
 import formatSpecialty from '../mongo/aggregation/formatSpecialty';
 import formatUnit from '../mongo/aggregation/formatUnit';
 import formatService from '../mongo/aggregation/formatService';
 import formatDepartment from '../mongo/aggregation/formatDepartment';
+import formatUH from '../mongo/aggregation/formatUH';
 
 export const checkForUpdates = async (lastCheckTimestamp: string) => {
   console.log('Last check for updates: ' + lastCheckTimestamp);
@@ -56,8 +59,9 @@ export const checkForUpdates = async (lastCheckTimestamp: string) => {
       const conUpdate: string = await JSON.parse(conPath);
 
       // Insert documents
+      await base.deleteMany({});
       await specialty.deleteMany({});
-      await unit.deleteMany({});
+      await uni.deleteMany({});
       await service.deleteMany({});
       await department.deleteMany({});
       await contactData.deleteMany({});
@@ -69,11 +73,13 @@ export const checkForUpdates = async (lastCheckTimestamp: string) => {
       await formatUnit();
       await formatService();
       await formatDepartment();
+      await formatUH();
 
       const speCount = await specialty.countDocuments();
-      const uniCount = await unit.countDocuments();
+      const uniCount = await uni.countDocuments();
       const serCount = await service.countDocuments();
       const depCount = await department.countDocuments();
+      const UHCount = await uhosp.countDocuments();
 
       console.log(
         'Document count:\n' +
@@ -83,7 +89,9 @@ export const checkForUpdates = async (lastCheckTimestamp: string) => {
           '\n' +
           serCount +
           '\n' +
-          depCount
+          depCount +
+          '\n' +
+          UHCount
       );
     } else {
       console.log('No updates found.');
@@ -91,10 +99,11 @@ export const checkForUpdates = async (lastCheckTimestamp: string) => {
   } catch (error) {
     console.log('An error ocurred:', error);
   } finally {
-    // Make a new timestamp
-    lastCheckTimestamp = new Date().toISOString();
     // Disconnect from Postgres and Mongo
     await postgresClient.end();
+    // Make a new timestamp
+    lastCheckTimestamp = new Date().toISOString();
+
     console.log('done');
   }
 };

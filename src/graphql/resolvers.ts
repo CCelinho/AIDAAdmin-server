@@ -1,27 +1,28 @@
-import { Organization, Resolvers } from './resolvers-types';
-import { department, service, specialty, unit } from '../mongo/schemas/schemas';
+import { DepartmentTree, Resolvers } from './resolvers-types';
+import {
+  uh,
+  dept,
+  serv,
+  spec,
+  unit,
+  relationship,
+} from '../mongo/schemas/schemas';
 
 export const resolvers: Resolvers = {
-  Organization: {
-    __resolveType: (org) => {
-      if (org.type?.text === 'department') {
-        return 'Department';
-      }
-      if (org.type?.text === 'service') {
-        return 'Service';
-      }
-      if (org.type?.text === 'unit') {
-        return 'Unit';
-      }
-      if (org.type?.text === 'specialty') {
-        return 'Specialty';
-      }
-      return null;
-    },
-  },
   Query: {
+    uhs: async (_, { offset, limit }) => {
+      let query = uh.find({ active: true });
+      offset && query.skip(offset);
+      limit && query.limit(limit);
+      try {
+        const result = await query.sort('UH').exec();
+        return await result;
+      } catch {
+        throw new Error('No UH found');
+      }
+    },
     departments: async (_, { offset, limit }) => {
-      let query = department.find({ active: true });
+      let query = dept.find({ active: true });
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -32,7 +33,7 @@ export const resolvers: Resolvers = {
       }
     },
     services: async (_, { offset, limit }) => {
-      let query = service.find({ active: true });
+      let query = serv.find({ active: true });
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -54,7 +55,7 @@ export const resolvers: Resolvers = {
       }
     },
     specialties: async (_, { offset, limit }) => {
-      let query = specialty.find({ active: true });
+      let query = spec.find({ active: true });
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -64,24 +65,80 @@ export const resolvers: Resolvers = {
         throw new Error('No specialties found');
       }
     },
-    organizations: async () => {
-      const departments = await department.find({ active: true });
-      const services = await service.find({ active: true });
-      const units = await unit.find({ active: true });
-      const specialties = await specialty.find({ active: true });
+    depChildren: async (_, { id }) => {
+      try {
+        const relsQuery = await relationship
+          .find({
+            parent: id,
+            type: 3,
+          })
+          .select({ _id: 0, child: 1 });
+        const serviceIDs = await relsQuery.map((obj) => obj.toObject().child);
+        const result = await serv.find({ _id: { $in: serviceIDs } });
+        return result;
+      } catch {
+        throw new Error('No relationships found');
+      }
+    },
+    serChildren: async (_, { id }) => {
+      try {
+        const relsQuery = await relationship
+          .find({
+            parent: id,
+            type: 2,
+          })
+          .select({ _id: 0, child: 1 });
+        const unitIDs = await relsQuery.map((obj) => obj.toObject().child);
+        const result = await unit.find({ _id: { $in: unitIDs } });
+        return result;
+      } catch {
+        throw new Error('No relationships found');
+      }
+    },
+    depTree: async (_, { id }) => {
+      try {
+        const result: DepartmentTree = {
+          uhs: [],
+          department: null,
+          services: [],
+          units: [],
+          specialties: [],
+        };
 
-      const mergedResults: Organization[] = [
-        ...departments,
-        ...services,
-        ...units,
-        ...specialties,
-      ];
+        result.department = await dept.findById(id);
 
-      return mergedResults;
+        const relUp1 = await relationship
+          .find({ child: id, type: 4 })
+          .select({ _id: 0, parent: 1 });
+        const uhIDs = relUp1.map((obj) => obj.toObject().parent);
+        result.uhs = await uh.find({ _id: { $in: uhIDs } });
+
+        const relDown1 = await relationship
+          .find({ parent: id, type: 3 })
+          .select({ _id: 0, child: 1 });
+        const serviceIDs = relDown1.map((obj) => obj.toObject().child);
+        result.services = await serv.find({ _id: { $in: serviceIDs } });
+
+        const relDown2 = await relationship
+          .find({ parent: { $in: serviceIDs }, type: 2 })
+          .select({ _id: 0, child: 1 });
+        const unitIDs = relDown2.map((obj) => obj.toObject().child);
+        result.units = await unit.find({ _id: { $in: unitIDs } });
+
+        const relDown3 = await relationship
+          .find({ parent: { $in: unitIDs }, type: 1 })
+          .select({ _id: 0, child: 1 });
+        const specialtyIDs = relDown3.map((obj) => obj.toObject().child);
+        result.specialties = await spec.find({ _id: { $in: specialtyIDs } });
+
+        return result;
+      } catch {
+        throw new Error('Error fetching tree');
+      }
     },
     departmentById: async (_, { id }) => {
       try {
-        const dep = await department.findById({ _id: id });
+        const dep = await dept.findById({ _id: id });
         return dep ? dep.toObject() : null;
       } catch {
         throw new Error('Department not found: ' + id);
@@ -89,7 +146,7 @@ export const resolvers: Resolvers = {
     },
     departmentByCOD: async (_, { cod }) => {
       try {
-        const dep = await department.findOne({ COD_DEPARTAMENTO: cod });
+        const dep = await dept.findOne({ COD_DEPARTAMENTO: cod });
         return dep ? dep.toObject() : null;
       } catch {
         throw new Error('Department not found');
@@ -97,7 +154,7 @@ export const resolvers: Resolvers = {
     },
     departmentByDES: async (_, { des }) => {
       try {
-        const dep = await department.findOne({ DES_DEPARTAMENTO: des });
+        const dep = await dept.findOne({ DES_DEPARTAMENTO: des });
         return dep ? dep.toObject() : null;
       } catch {
         throw new Error('Department not found');
@@ -105,7 +162,7 @@ export const resolvers: Resolvers = {
     },
     departmentSearch: async (_, { searchString }) => {
       try {
-        const deps = await department.find({
+        const deps = await dept.find({
           $or: [
             { DES_DEPARTAMENTO: { $regex: searchString, $options: 'i' } },
             { 'partOf.display': { $regex: searchString, $options: 'i' } },
@@ -117,7 +174,7 @@ export const resolvers: Resolvers = {
       }
     },
     servicesByDep: async (_, { cod, offset, limit }) => {
-      let query = service.find({ COD_DEPARTAMENTO: { $in: cod } });
+      let query = serv.find({ COD_DEPARTAMENTO: { $in: cod } });
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {

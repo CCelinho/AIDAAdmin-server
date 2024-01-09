@@ -62,16 +62,12 @@ export type ContactPoint = {
 
 export type Department = Organization & {
   __typename?: 'Department';
-  AGREGA1?: Maybe<Scalars['String']['output']>;
-  AGREGA2?: Maybe<Scalars['String']['output']>;
-  AGREGA3?: Maybe<Scalars['String']['output']>;
   CHILDREN?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
   COD_DEPARTAMENTO?: Maybe<Scalars['Int']['output']>;
   COD_ESTATISTICO?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   CR?: Maybe<Scalars['String']['output']>;
   DES_DEPARTAMENTO?: Maybe<Scalars['String']['output']>;
   ID_CP?: Maybe<Scalars['String']['output']>;
-  UH?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
   _id?: Maybe<Scalars['ObjectId']['output']>;
@@ -84,6 +80,15 @@ export type Department = Organization & {
   name?: Maybe<Scalars['String']['output']>;
   partOf?: Maybe<Reference>;
   type?: Maybe<CodeableConcept>;
+};
+
+export type DepartmentTree = {
+  __typename?: 'DepartmentTree';
+  department?: Maybe<Department>;
+  services?: Maybe<Array<Service>>;
+  specialties?: Maybe<Array<Specialty>>;
+  uhs?: Maybe<Array<Uh>>;
+  units?: Maybe<Array<Unit>>;
 };
 
 export type ExtendedContactDetail = {
@@ -118,9 +123,6 @@ export type Identifier = {
 };
 
 export type Organization = {
-  AGREGA1?: Maybe<Scalars['String']['output']>;
-  AGREGA2?: Maybe<Scalars['String']['output']>;
-  AGREGA3?: Maybe<Scalars['String']['output']>;
   CR?: Maybe<Scalars['String']['output']>;
   ID_CP?: Maybe<Scalars['String']['output']>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
@@ -145,21 +147,35 @@ export type Period = {
 
 export type Query = {
   __typename?: 'Query';
+  depChildren?: Maybe<Array<Service>>;
+  depTree: DepartmentTree;
   departmentByCOD?: Maybe<Department>;
   departmentByDES?: Maybe<Department>;
   departmentById?: Maybe<Department>;
   departmentSearch?: Maybe<Array<Department>>;
   departments?: Maybe<Array<Department>>;
   organizations?: Maybe<Array<Organization>>;
+  serChildren?: Maybe<Array<Unit>>;
   services?: Maybe<Array<Service>>;
   servicesByDep?: Maybe<Array<Service>>;
   specialties?: Maybe<Array<Specialty>>;
+  uhs?: Maybe<Array<Uh>>;
   units?: Maybe<Array<Unit>>;
 };
 
 
+export type QueryDepChildrenArgs = {
+  id: Scalars['ObjectId']['input'];
+};
+
+
+export type QueryDepTreeArgs = {
+  id: Scalars['ObjectId']['input'];
+};
+
+
 export type QueryDepartmentByCodArgs = {
-  cod?: InputMaybe<Scalars['Int']['input']>;
+  cod: Scalars['Int']['input'];
 };
 
 
@@ -169,7 +185,7 @@ export type QueryDepartmentByDesArgs = {
 
 
 export type QueryDepartmentByIdArgs = {
-  id?: InputMaybe<Scalars['ObjectId']['input']>;
+  id: Scalars['ObjectId']['input'];
 };
 
 
@@ -187,6 +203,11 @@ export type QueryDepartmentsArgs = {
 export type QueryOrganizationsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerySerChildrenArgs = {
+  id: Scalars['ObjectId']['input'];
 };
 
 
@@ -209,6 +230,12 @@ export type QuerySpecialtiesArgs = {
 };
 
 
+export type QueryUhsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryUnitsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -224,18 +251,12 @@ export type Reference = {
 
 export type Service = Organization & {
   __typename?: 'Service';
-  AGREGA1?: Maybe<Scalars['String']['output']>;
-  AGREGA2?: Maybe<Scalars['String']['output']>;
-  AGREGA3?: Maybe<Scalars['String']['output']>;
   CHILDREN?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
-  COD_DEPARTAMENTO?: Maybe<Scalars['Int']['output']>;
   COD_ESTATISTICO?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   COD_SERVICO?: Maybe<Scalars['Int']['output']>;
   CR?: Maybe<Scalars['String']['output']>;
-  DES_DEPARTAMENTO?: Maybe<Scalars['String']['output']>;
   DES_SERVICO?: Maybe<Scalars['String']['output']>;
   ID_CP?: Maybe<Scalars['String']['output']>;
-  UH?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
   _id?: Maybe<Scalars['ObjectId']['output']>;
@@ -255,17 +276,10 @@ export type Specialty = Organization & {
   AGREGA1?: Maybe<Scalars['String']['output']>;
   AGREGA2?: Maybe<Scalars['String']['output']>;
   AGREGA3?: Maybe<Scalars['String']['output']>;
-  COD_DEPARTAMENTO?: Maybe<Scalars['Int']['output']>;
   COD_ESTATISTICO?: Maybe<Scalars['String']['output']>;
-  COD_SERVICO?: Maybe<Scalars['Int']['output']>;
-  COD_UNIDADE?: Maybe<Scalars['Int']['output']>;
   CR?: Maybe<Scalars['String']['output']>;
-  DES_DEPARTAMENTO?: Maybe<Scalars['String']['output']>;
   DES_ESTATISTICO?: Maybe<Scalars['String']['output']>;
-  DES_SERVICO?: Maybe<Scalars['String']['output']>;
-  DES_UNIDADE?: Maybe<Scalars['String']['output']>;
   ID_CP?: Maybe<Scalars['String']['output']>;
-  UH?: Maybe<Scalars['String']['output']>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
   _id?: Maybe<Scalars['ObjectId']['output']>;
@@ -282,14 +296,10 @@ export type Specialty = Organization & {
 
 export type Uh = Organization & {
   __typename?: 'UH';
-  AGREGA1?: Maybe<Scalars['String']['output']>;
-  AGREGA2?: Maybe<Scalars['String']['output']>;
-  AGREGA3?: Maybe<Scalars['String']['output']>;
   CHILDREN?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
   COD_ESTATISTICO?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   CR?: Maybe<Scalars['String']['output']>;
   ID_CP?: Maybe<Scalars['String']['output']>;
-  UH?: Maybe<Scalars['String']['output']>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
   _id?: Maybe<Scalars['ObjectId']['output']>;
@@ -306,19 +316,11 @@ export type Uh = Organization & {
 
 export type Unit = Organization & {
   __typename?: 'Unit';
-  AGREGA1?: Maybe<Scalars['String']['output']>;
-  AGREGA2?: Maybe<Scalars['String']['output']>;
-  AGREGA3?: Maybe<Scalars['String']['output']>;
-  COD_DEPARTAMENTO?: Maybe<Scalars['Int']['output']>;
   COD_ESTATISTICO?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  COD_SERVICO?: Maybe<Scalars['Int']['output']>;
   COD_UNIDADE?: Maybe<Scalars['Int']['output']>;
   CR?: Maybe<Scalars['String']['output']>;
-  DES_DEPARTAMENTO?: Maybe<Scalars['String']['output']>;
-  DES_SERVICO?: Maybe<Scalars['String']['output']>;
   DES_UNIDADE?: Maybe<Scalars['String']['output']>;
   ID_CP?: Maybe<Scalars['String']['output']>;
-  UH?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
   _id?: Maybe<Scalars['ObjectId']['output']>;
@@ -416,6 +418,7 @@ export type ResolversTypes = {
   ContactPoint: ResolverTypeWrapper<ContactPoint>;
   Date: ResolverTypeWrapper<Scalars['Date']['output']>;
   Department: ResolverTypeWrapper<Department>;
+  DepartmentTree: ResolverTypeWrapper<DepartmentTree>;
   ExtendedContactDetail: ResolverTypeWrapper<ExtendedContactDetail>;
   HumanName: ResolverTypeWrapper<HumanName>;
   Identifier: ResolverTypeWrapper<Identifier>;
@@ -441,6 +444,7 @@ export type ResolversParentTypes = {
   ContactPoint: ContactPoint;
   Date: Scalars['Date']['output'];
   Department: Department;
+  DepartmentTree: DepartmentTree;
   ExtendedContactDetail: ExtendedContactDetail;
   HumanName: HumanName;
   Identifier: Identifier;
@@ -507,16 +511,12 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type DepartmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Department'] = ResolversParentTypes['Department']> = {
-  AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   CHILDREN?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
   COD_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   COD_ESTATISTICO?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   DES_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  UH?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
@@ -529,6 +529,15 @@ export type DepartmentResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DepartmentTreeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DepartmentTree'] = ResolversParentTypes['DepartmentTree']> = {
+  department?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType>;
+  services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType>;
+  specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType>;
+  uhs?: Resolver<Maybe<Array<ResolversTypes['UH']>>, ParentType, ContextType>;
+  units?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -569,9 +578,6 @@ export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type OrganizationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
   __resolveType: TypeResolveFn<'Department' | 'Service' | 'Specialty' | 'UH' | 'Unit', ParentType, ContextType>;
-  AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
@@ -595,15 +601,19 @@ export type PeriodResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  departmentByCOD?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, Partial<QueryDepartmentByCodArgs>>;
+  depChildren?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, RequireFields<QueryDepChildrenArgs, 'id'>>;
+  depTree?: Resolver<ResolversTypes['DepartmentTree'], ParentType, ContextType, RequireFields<QueryDepTreeArgs, 'id'>>;
+  departmentByCOD?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByCodArgs, 'cod'>>;
   departmentByDES?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByDesArgs, 'des'>>;
-  departmentById?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, Partial<QueryDepartmentByIdArgs>>;
+  departmentById?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByIdArgs, 'id'>>;
   departmentSearch?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType, RequireFields<QueryDepartmentSearchArgs, 'searchString'>>;
   departments?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType, Partial<QueryDepartmentsArgs>>;
   organizations?: Resolver<Maybe<Array<ResolversTypes['Organization']>>, ParentType, ContextType, Partial<QueryOrganizationsArgs>>;
+  serChildren?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType, RequireFields<QuerySerChildrenArgs, 'id'>>;
   services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesArgs>>;
   servicesByDep?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesByDepArgs>>;
   specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType, Partial<QuerySpecialtiesArgs>>;
+  uhs?: Resolver<Maybe<Array<ResolversTypes['UH']>>, ParentType, ContextType, Partial<QueryUhsArgs>>;
   units?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType, Partial<QueryUnitsArgs>>;
 };
 
@@ -616,18 +626,12 @@ export type ReferenceResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type ServiceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Service'] = ResolversParentTypes['Service']> = {
-  AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   CHILDREN?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
-  COD_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   COD_ESTATISTICO?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   COD_SERVICO?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  DES_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   DES_SERVICO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  UH?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
@@ -647,17 +651,10 @@ export type SpecialtyResolvers<ContextType = any, ParentType extends ResolversPa
   AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  COD_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   COD_ESTATISTICO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  COD_SERVICO?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  COD_UNIDADE?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  DES_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   DES_ESTATISTICO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  DES_SERVICO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  DES_UNIDADE?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  UH?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
@@ -674,14 +671,10 @@ export type SpecialtyResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type UhResolvers<ContextType = any, ParentType extends ResolversParentTypes['UH'] = ResolversParentTypes['UH']> = {
-  AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   CHILDREN?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
   COD_ESTATISTICO?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  UH?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
@@ -698,19 +691,11 @@ export type UhResolvers<ContextType = any, ParentType extends ResolversParentTyp
 };
 
 export type UnitResolvers<ContextType = any, ParentType extends ResolversParentTypes['Unit'] = ResolversParentTypes['Unit']> = {
-  AGREGA1?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  AGREGA3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  COD_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   COD_ESTATISTICO?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  COD_SERVICO?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   COD_UNIDADE?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  DES_DEPARTAMENTO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  DES_SERVICO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   DES_UNIDADE?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  UH?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
@@ -733,6 +718,7 @@ export type Resolvers<ContextType = any> = {
   ContactPoint?: ContactPointResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Department?: DepartmentResolvers<ContextType>;
+  DepartmentTree?: DepartmentTreeResolvers<ContextType>;
   ExtendedContactDetail?: ExtendedContactDetailResolvers<ContextType>;
   HumanName?: HumanNameResolvers<ContextType>;
   Identifier?: IdentifierResolvers<ContextType>;

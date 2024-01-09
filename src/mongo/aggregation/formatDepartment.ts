@@ -15,7 +15,7 @@ const formatDepartment = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'ser',
+            from: collectionNames.serv,
             localField: 'COD_DEPARTAMENTO',
             foreignField: 'COD_DEPARTAMENTO',
             as: 'CHILDREN',
@@ -59,7 +59,7 @@ const formatDepartment = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'spe',
+            from: collectionNames.spec,
             localField: 'COD_DEPARTAMENTO',
             foreignField: 'COD_DEPARTAMENTO',
             as: 'COD_ESTATISTICO',
@@ -116,14 +116,20 @@ const formatDepartment = async () => {
               reference: 'CHUSA',
               display: 'Centro Hospitalar Universitário Santo António',
             },
+            __t: 'dept',
           },
       },
       {
-        $out: collectionNames.dept,
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.dept,
       },
     ])
     .exec()
     .catch((err) => console.log(err));
+
   await department
     .aggregate([
       {
@@ -193,7 +199,14 @@ const formatDepartment = async () => {
             },
           },
       },
-      { $unset: '_id' },
+      {
+        $unset:
+          /**
+           * Provide the field name to exclude.
+           * To exclude multiple fields, pass the field names in an array.
+           */
+          '_id',
+      },
       {
         $out:
           /**
@@ -207,7 +220,95 @@ const formatDepartment = async () => {
 
   await department.aggregate([
     {
-      $merge: { into: 'orgs' },
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          parent: '$_id',
+        },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$CHILDREN',
+        },
+    },
+    {
+      $lookup:
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        {
+          from: collectionNames.serv,
+          localField: 'CHILDREN',
+          foreignField: 'COD_SERVICO',
+          as: 'child',
+        },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$child',
+        },
+    },
+    {
+      $project: {
+        _id: 0,
+        parent: '$parent',
+        child: '$child._id',
+      },
+    },
+    {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          type: 3,
+        },
+    },
+    {
+      $merge:
+        /**
+         * Provide the name of the output collection.
+         */
+        {
+          into: collectionNames.rels,
+        },
+    },
+  ]);
+
+  await department.aggregate([
+    {
+      $unset:
+        /**
+         * Provide the field name to exclude.
+         * To exclude multiple fields, pass the field names in an array.
+         */
+        ['CHILDREN', 'UH'],
+    },
+    {
+      $merge: { into: collectionNames.all },
     },
   ]);
 };

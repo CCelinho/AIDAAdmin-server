@@ -10,9 +10,9 @@ import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheContr
 
 import { resolvers } from './graphql/resolvers';
 import { checkForUpdates } from './functions/updateCheckerPostgres';
-import forceUpdate from './forceUpdate';
 import { mongoCString } from './constants';
 import { mongoConnect } from './connections/mongoConnection';
+import forceUpdate from './functions/forceUpdate';
 
 const app = express();
 const port = process.env.VITE_GRAPHQLPORT;
@@ -20,8 +20,8 @@ const port = process.env.VITE_GRAPHQLPORT;
 const typeDefs = readFileSync('./src/graphql/schema.graphql', 'utf-8');
 
 const bootstrapServer = async () => {
-  forceUpdate();
   await mongoConnect(mongoCString);
+  await forceUpdate();
   let lastCheckTimestamp = new Date().toISOString();
   cron.schedule('0 * * * *', async () => {
     checkForUpdates(lastCheckTimestamp);

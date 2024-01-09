@@ -15,7 +15,7 @@ const formatSpecialty = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'contacts',
+            from: collectionNames.contacts,
             localField: 'COD_ESTATISTICO',
             foreignField: 'COD_ESTATISTICO',
             as: 'result',
@@ -184,10 +184,15 @@ const formatSpecialty = async () => {
               identifier: null,
               display: '$DES_UNIDADE',
             },
+            __t: 'spec',
           },
       },
       {
-        $out: collectionNames.spec,
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.spec,
       },
     ])
     .exec()
@@ -239,9 +244,6 @@ const formatSpecialty = async () => {
             COD_ESTATISTICO: {
               $first: '$COD_ESTATISTICO',
             },
-            DES_ESTATISTICO: {
-              $first: '$DES_ESTATISTICO',
-            },
             identifier: {
               $first: '$identifier',
             },
@@ -279,14 +281,36 @@ const formatSpecialty = async () => {
            */
           '_id',
       },
-      { $out: collectionNames.unit },
+      {
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.unit,
+      },
     ])
     .exec()
     .catch((err) => console.log(err));
 
   await specialty.aggregate([
     {
-      $out: 'orgs',
+      $unset:
+        /**
+         * Provide the field name to exclude.
+         * To exclude multiple fields, pass the field names in an array.
+         */
+        [
+          'COD_DEPARTAMENTO',
+          'DES_DEPARTAMENTO',
+          'COD_SERVICO',
+          'DES_SERVICO',
+          'COD_UNIDADE',
+          'DES_UNIDADE',
+          'UH',
+        ],
+    },
+    {
+      $out: collectionNames.all,
     },
   ]);
 };

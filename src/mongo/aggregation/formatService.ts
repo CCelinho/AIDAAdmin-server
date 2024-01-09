@@ -15,7 +15,7 @@ const formatService = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'uni',
+            from: collectionNames.unit,
             localField: 'COD_SERVICO',
             foreignField: 'COD_SERVICO',
             as: 'result',
@@ -62,7 +62,7 @@ const formatService = async () => {
            * let: Optional variables to use in the pipeline field stages.
            */
           {
-            from: 'spe',
+            from: collectionNames.spec,
             localField: 'COD_SERVICO',
             foreignField: 'COD_SERVICO',
             as: 'result',
@@ -121,10 +121,15 @@ const formatService = async () => {
               reference: '$COD_DEPARTAMENTO',
               display: '$DES_DEPARTAMENTO',
             },
+            __t: 'serv',
           },
       },
       {
-        $out: collectionNames.serv,
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.serv,
       },
     ])
     .exec()
@@ -211,7 +216,11 @@ const formatService = async () => {
           '_id',
       },
       {
-        $out: collectionNames.dept,
+        $out:
+          /**
+           * Provide the name of the output collection.
+           */
+          collectionNames.dept,
       },
     ])
     .exec()
@@ -219,7 +228,95 @@ const formatService = async () => {
 
   await service.aggregate([
     {
-      $merge: { into: 'orgs' },
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          parent: '$_id',
+        },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$CHILDREN',
+        },
+    },
+    {
+      $lookup:
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        {
+          from: collectionNames.unit,
+          localField: 'CHILDREN',
+          foreignField: 'COD_UNIDADE',
+          as: 'child',
+        },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: '$child',
+        },
+    },
+    {
+      $project: {
+        _id: 0,
+        parent: '$parent',
+        child: '$child._id',
+      },
+    },
+    {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          type: 2,
+        },
+    },
+    {
+      $merge:
+        /**
+         * Provide the name of the output collection.
+         */
+        {
+          into: collectionNames.rels,
+        },
+    },
+  ]);
+
+  await service.aggregate([
+    {
+      $unset:
+        /**
+         * Provide the field name to exclude.
+         * To exclude multiple fields, pass the field names in an array.
+         */
+        ['COD_DEPARTAMENTO', 'DES_DEPARTAMENTO', 'UH', 'CHILDREN'],
+    },
+    {
+      $merge: { into: collectionNames.all },
     },
   ]);
 };
