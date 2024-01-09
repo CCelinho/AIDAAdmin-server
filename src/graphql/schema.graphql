@@ -199,15 +199,26 @@ type Specialty implements Organization {
   COD_ESTATISTICO: String
 }
 
+type DepartmentTree {
+  uhs: [UH!]
+  department: Department
+  services: [Service!]
+  units: [Unit!]
+  specialties: [Specialty!]
+}
+
 type Query {
   departments(offset: Int, limit: Int): [Department!]
   services(offset: Int, limit: Int): [Service!]
   units(offset: Int, limit: Int): [Unit!]
   specialties(offset: Int, limit: Int): [Specialty!]
   uhs(offset: Int, limit: Int): [UH!]
+  depChildren(id: ObjectId!): [Service!]
+  serChildren(id: ObjectId!): [Unit!]
+  depTree(id: ObjectId!): DepartmentTree!
   organizations(offset: Int, limit: Int): [Organization!]
-  departmentById(id: ObjectId): Department
-  departmentByCOD(cod: Int): Department
+  departmentById(id: ObjectId!): Department
+  departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
   servicesByDep(offset: Int, limit: Int, cod: Int): [Service!]
   departmentSearch(searchString: String!): [Department!]

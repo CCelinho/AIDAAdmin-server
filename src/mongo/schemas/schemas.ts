@@ -210,19 +210,16 @@ const contactDataSchema = new mongoose.Schema(
 
 export const uhSchema = new mongoose.Schema({
   UH: [{ type: String }],
-  CHILDREN: [{ type: Number }],
   COD_ESTATISTICO: [{ type: String }],
 });
 
 export const deptSchema = new mongoose.Schema({
-  CHILDREN: [{ type: Number }],
   DES_DEPARTAMENTO: { type: String },
   COD_DEPARTAMENTO: { type: Number },
   COD_ESTATISTICO: [{ type: String }],
 });
 
 export const servSchema = new mongoose.Schema({
-  CHILDREN: [{ type: Number }],
   COD_SERVICO: { type: Number },
   DES_SERVICO: { type: String },
   COD_ESTATISTICO: [{ type: String }],
@@ -244,7 +241,7 @@ export const specSchema = new mongoose.Schema({
 
 export type identifier = InferSchemaType<typeof identifierSchema>;
 
-export const base = mongoose.model('base', baseSchema);
+// Models defined solely for purpose of aggregation
 export const uhosp = mongoose.model('uhosp', uhospSchema);
 export const department = mongoose.model('department', departmentSchema);
 export const service = mongoose.model('service', serviceSchema);
@@ -259,8 +256,10 @@ type serv = InferSchemaType<typeof serviceSchema>;
 type unit = InferSchemaType<typeof uniSchema>;
 type spec = InferSchemaType<typeof specialtySchema>;
 
-export const uh = base.discriminator('uh', uhSchema);
-export const dept = base.discriminator('dept', deptSchema);
-export const unit = base.discriminator('unit', unitSchema);
-export const serv = base.discriminator('serv', servSchema);
-export const spec = base.discriminator('spec', specSchema);
+// Models defined for querying
+export const base = mongoose.model('base', baseSchema);
+export const uh = base.discriminator<uh>('uh', uhSchema);
+export const dept = base.discriminator<dept>('dept', deptSchema);
+export const unit = base.discriminator<unit>('unit', unitSchema);
+export const serv = base.discriminator<serv>('serv', servSchema);
+export const spec = base.discriminator<spec>('spec', specSchema);

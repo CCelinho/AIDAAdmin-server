@@ -70,6 +70,7 @@ const formatUnit = async () => {
               reference: '$COD_SERVICO',
               display: '$DES_SERVICO',
             },
+            __t: 'unit',
           },
       },
       {

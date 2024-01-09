@@ -12,6 +12,7 @@ import {
   service,
   department,
   uhosp,
+  base,
 } from '../mongo/schemas/schemas';
 import formatSpecialty from '../mongo/aggregation/formatSpecialty';
 import formatUnit from '../mongo/aggregation/formatUnit';
@@ -58,6 +59,7 @@ export const checkForUpdates = async (lastCheckTimestamp: string) => {
       const conUpdate: string = await JSON.parse(conPath);
 
       // Insert documents
+      await base.deleteMany({});
       await specialty.deleteMany({});
       await uni.deleteMany({});
       await service.deleteMany({});

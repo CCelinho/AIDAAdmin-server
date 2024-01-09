@@ -1,27 +1,14 @@
-import { Organization, Resolvers } from './resolvers-types';
-import { uh, dept, serv, spec, unit } from '../mongo/schemas/schemas';
+import { DepartmentTree, Resolvers } from './resolvers-types';
+import {
+  uh,
+  dept,
+  serv,
+  spec,
+  unit,
+  relationship,
+} from '../mongo/schemas/schemas';
 
 export const resolvers: Resolvers = {
-  Organization: {
-    __resolveType: (org) => {
-      if (org.type?.coding?.code === 'dept') {
-        return 'Department';
-      }
-      if (org.type?.coding?.code === 'serv') {
-        return 'Service';
-      }
-      if (org.type?.coding?.code === 'unit') {
-        return 'Unit';
-      }
-      if (org.type?.coding?.code === 'spec') {
-        return 'Specialty';
-      }
-      if (org.type?.coding?.code === 'uh') {
-        return 'UH';
-      }
-      return null;
-    },
-  },
   Query: {
     uhs: async (_, { offset, limit }) => {
       let query = uh.find({ active: true });
@@ -34,7 +21,6 @@ export const resolvers: Resolvers = {
         throw new Error('No UH found');
       }
     },
-
     departments: async (_, { offset, limit }) => {
       let query = dept.find({ active: true });
       offset && query.skip(offset);
@@ -79,20 +65,76 @@ export const resolvers: Resolvers = {
         throw new Error('No specialties found');
       }
     },
-    organizations: async () => {
-      const departments = await dept.find({ active: true });
-      const services = await serv.find({ active: true });
-      const units = await unit.find({ active: true });
-      const specialties = await spec.find({ active: true });
+    depChildren: async (_, { id }) => {
+      try {
+        const relsQuery = await relationship
+          .find({
+            parent: id,
+            type: 3,
+          })
+          .select({ _id: 0, child: 1 });
+        const serviceIDs = await relsQuery.map((obj) => obj.toObject().child);
+        const result = await serv.find({ _id: { $in: serviceIDs } });
+        return result;
+      } catch {
+        throw new Error('No relationships found');
+      }
+    },
+    serChildren: async (_, { id }) => {
+      try {
+        const relsQuery = await relationship
+          .find({
+            parent: id,
+            type: 2,
+          })
+          .select({ _id: 0, child: 1 });
+        const unitIDs = await relsQuery.map((obj) => obj.toObject().child);
+        const result = await unit.find({ _id: { $in: unitIDs } });
+        return result;
+      } catch {
+        throw new Error('No relationships found');
+      }
+    },
+    depTree: async (_, { id }) => {
+      try {
+        const result: DepartmentTree = {
+          uhs: [],
+          department: null,
+          services: [],
+          units: [],
+          specialties: [],
+        };
 
-      const mergedResults: Organization[] = [
-        ...departments,
-        ...services,
-        ...units,
-        ...specialties,
-      ];
+        result.department = await dept.findById(id);
 
-      return mergedResults;
+        const relUp1 = await relationship
+          .find({ child: id, type: 4 })
+          .select({ _id: 0, parent: 1 });
+        const uhIDs = relUp1.map((obj) => obj.toObject().parent);
+        result.uhs = await uh.find({ _id: { $in: uhIDs } });
+
+        const relDown1 = await relationship
+          .find({ parent: id, type: 3 })
+          .select({ _id: 0, child: 1 });
+        const serviceIDs = relDown1.map((obj) => obj.toObject().child);
+        result.services = await serv.find({ _id: { $in: serviceIDs } });
+
+        const relDown2 = await relationship
+          .find({ parent: { $in: serviceIDs }, type: 2 })
+          .select({ _id: 0, child: 1 });
+        const unitIDs = relDown2.map((obj) => obj.toObject().child);
+        result.units = await unit.find({ _id: { $in: unitIDs } });
+
+        const relDown3 = await relationship
+          .find({ parent: { $in: unitIDs }, type: 1 })
+          .select({ _id: 0, child: 1 });
+        const specialtyIDs = relDown3.map((obj) => obj.toObject().child);
+        result.specialties = await spec.find({ _id: { $in: specialtyIDs } });
+
+        return result;
+      } catch {
+        throw new Error('Error fetching tree');
+      }
     },
     departmentById: async (_, { id }) => {
       try {

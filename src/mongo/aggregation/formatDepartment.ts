@@ -116,6 +116,7 @@ const formatDepartment = async () => {
               reference: 'CHUSA',
               display: 'Centro Hospitalar Universitário Santo António',
             },
+            __t: 'dept',
           },
       },
       {
@@ -304,7 +305,7 @@ const formatDepartment = async () => {
          * Provide the field name to exclude.
          * To exclude multiple fields, pass the field names in an array.
          */
-        'UH',
+        ['CHILDREN', 'UH'],
     },
     {
       $merge: { into: collectionNames.all },

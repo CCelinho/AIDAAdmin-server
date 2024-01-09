@@ -64,6 +64,7 @@ const formatUH = async () => {
               },
               text: 'uh',
             },
+            __t: 'uh',
           },
       },
       {
@@ -166,6 +167,7 @@ const formatUH = async () => {
   ]);
 
   await uhosp.aggregate([
+    { $unset: 'CHILDREN' },
     {
       $merge: { into: collectionNames.all },
     },

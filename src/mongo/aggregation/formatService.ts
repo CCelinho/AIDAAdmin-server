@@ -121,6 +121,7 @@ const formatService = async () => {
               reference: '$COD_DEPARTAMENTO',
               display: '$DES_DEPARTAMENTO',
             },
+            __t: 'serv',
           },
       },
       {
@@ -312,7 +313,7 @@ const formatService = async () => {
          * Provide the field name to exclude.
          * To exclude multiple fields, pass the field names in an array.
          */
-        ['COD_DEPARTAMENTO', 'DES_DEPARTAMENTO', 'UH'],
+        ['COD_DEPARTAMENTO', 'DES_DEPARTAMENTO', 'UH', 'CHILDREN'],
     },
     {
       $merge: { into: collectionNames.all },

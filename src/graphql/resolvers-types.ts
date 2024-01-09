@@ -82,6 +82,15 @@ export type Department = Organization & {
   type?: Maybe<CodeableConcept>;
 };
 
+export type DepartmentTree = {
+  __typename?: 'DepartmentTree';
+  department?: Maybe<Department>;
+  services?: Maybe<Array<Service>>;
+  specialties?: Maybe<Array<Specialty>>;
+  uhs?: Maybe<Array<Uh>>;
+  units?: Maybe<Array<Unit>>;
+};
+
 export type ExtendedContactDetail = {
   __typename?: 'ExtendedContactDetail';
   address?: Maybe<Array<Maybe<Address>>>;
@@ -138,12 +147,15 @@ export type Period = {
 
 export type Query = {
   __typename?: 'Query';
+  depChildren?: Maybe<Array<Service>>;
+  depTree: DepartmentTree;
   departmentByCOD?: Maybe<Department>;
   departmentByDES?: Maybe<Department>;
   departmentById?: Maybe<Department>;
   departmentSearch?: Maybe<Array<Department>>;
   departments?: Maybe<Array<Department>>;
   organizations?: Maybe<Array<Organization>>;
+  serChildren?: Maybe<Array<Unit>>;
   services?: Maybe<Array<Service>>;
   servicesByDep?: Maybe<Array<Service>>;
   specialties?: Maybe<Array<Specialty>>;
@@ -152,8 +164,18 @@ export type Query = {
 };
 
 
+export type QueryDepChildrenArgs = {
+  id: Scalars['ObjectId']['input'];
+};
+
+
+export type QueryDepTreeArgs = {
+  id: Scalars['ObjectId']['input'];
+};
+
+
 export type QueryDepartmentByCodArgs = {
-  cod?: InputMaybe<Scalars['Int']['input']>;
+  cod: Scalars['Int']['input'];
 };
 
 
@@ -163,7 +185,7 @@ export type QueryDepartmentByDesArgs = {
 
 
 export type QueryDepartmentByIdArgs = {
-  id?: InputMaybe<Scalars['ObjectId']['input']>;
+  id: Scalars['ObjectId']['input'];
 };
 
 
@@ -181,6 +203,11 @@ export type QueryDepartmentsArgs = {
 export type QueryOrganizationsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerySerChildrenArgs = {
+  id: Scalars['ObjectId']['input'];
 };
 
 
@@ -391,6 +418,7 @@ export type ResolversTypes = {
   ContactPoint: ResolverTypeWrapper<ContactPoint>;
   Date: ResolverTypeWrapper<Scalars['Date']['output']>;
   Department: ResolverTypeWrapper<Department>;
+  DepartmentTree: ResolverTypeWrapper<DepartmentTree>;
   ExtendedContactDetail: ResolverTypeWrapper<ExtendedContactDetail>;
   HumanName: ResolverTypeWrapper<HumanName>;
   Identifier: ResolverTypeWrapper<Identifier>;
@@ -416,6 +444,7 @@ export type ResolversParentTypes = {
   ContactPoint: ContactPoint;
   Date: Scalars['Date']['output'];
   Department: Department;
+  DepartmentTree: DepartmentTree;
   ExtendedContactDetail: ExtendedContactDetail;
   HumanName: HumanName;
   Identifier: Identifier;
@@ -503,6 +532,15 @@ export type DepartmentResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type DepartmentTreeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DepartmentTree'] = ResolversParentTypes['DepartmentTree']> = {
+  department?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType>;
+  services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType>;
+  specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType>;
+  uhs?: Resolver<Maybe<Array<ResolversTypes['UH']>>, ParentType, ContextType>;
+  units?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ExtendedContactDetailResolvers<ContextType = any, ParentType extends ResolversParentTypes['ExtendedContactDetail'] = ResolversParentTypes['ExtendedContactDetail']> = {
   address?: Resolver<Maybe<Array<Maybe<ResolversTypes['Address']>>>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['HumanName']>, ParentType, ContextType>;
@@ -563,12 +601,15 @@ export type PeriodResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  departmentByCOD?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, Partial<QueryDepartmentByCodArgs>>;
+  depChildren?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, RequireFields<QueryDepChildrenArgs, 'id'>>;
+  depTree?: Resolver<ResolversTypes['DepartmentTree'], ParentType, ContextType, RequireFields<QueryDepTreeArgs, 'id'>>;
+  departmentByCOD?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByCodArgs, 'cod'>>;
   departmentByDES?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByDesArgs, 'des'>>;
-  departmentById?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, Partial<QueryDepartmentByIdArgs>>;
+  departmentById?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QueryDepartmentByIdArgs, 'id'>>;
   departmentSearch?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType, RequireFields<QueryDepartmentSearchArgs, 'searchString'>>;
   departments?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType, Partial<QueryDepartmentsArgs>>;
   organizations?: Resolver<Maybe<Array<ResolversTypes['Organization']>>, ParentType, ContextType, Partial<QueryOrganizationsArgs>>;
+  serChildren?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType, RequireFields<QuerySerChildrenArgs, 'id'>>;
   services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesArgs>>;
   servicesByDep?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesByDepArgs>>;
   specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType, Partial<QuerySpecialtiesArgs>>;
@@ -677,6 +718,7 @@ export type Resolvers<ContextType = any> = {
   ContactPoint?: ContactPointResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Department?: DepartmentResolvers<ContextType>;
+  DepartmentTree?: DepartmentTreeResolvers<ContextType>;
   ExtendedContactDetail?: ExtendedContactDetailResolvers<ContextType>;
   HumanName?: HumanNameResolvers<ContextType>;
   Identifier?: IdentifierResolvers<ContextType>;

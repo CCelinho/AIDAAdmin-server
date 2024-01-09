@@ -184,6 +184,7 @@ const formatSpecialty = async () => {
               identifier: null,
               display: '$DES_UNIDADE',
             },
+            __t: 'spec',
           },
       },
       {
