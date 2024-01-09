@@ -5,7 +5,7 @@ export const dateScalar = new GraphQLScalarType({
   name: 'Date',
   description: 'Date type in ISO string format',
   serialize(value) {
-    return (value as typeof Date).toString();
+    return (value as Date).toISOString();
   },
   parseValue(value) {
     return new Date(value as string);
@@ -19,6 +19,7 @@ export const dateScalar = new GraphQLScalarType({
 });
 
 export class objectIdScalar {
+  name = 'ObjectId';
   description = 'Mongo object id scalar type';
 
   parseValue(value: string) {

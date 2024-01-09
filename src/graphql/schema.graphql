@@ -84,7 +84,6 @@ interface Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
-  UH: String
   CR: String
   identifier: Identifier
   active: Boolean
@@ -95,11 +94,25 @@ interface Organization {
   contact: ExtendedContactDetail
   partOf: Reference
   endpoint: Reference
-  AGREGA1: String
-  AGREGA2: String
-  AGREGA3: String
-  DES_DEPARTAMENTO: String
-  COD_DEPARTAMENTO: Int
+}
+
+type UH implements Organization {
+  _id: ObjectId
+  ID_CP: String
+  VIG_INI: Date
+  VIG_FIM: Date
+  CR: String
+  identifier: Identifier
+  active: Boolean
+  type: CodeableConcept
+  name: String
+  alias: String
+  description: String
+  contact: ExtendedContactDetail
+  partOf: Reference
+  endpoint: Reference
+  COD_ESTATISTICO: [String]
+  CHILDREN: [Int]
 }
 
 type Department implements Organization {
@@ -107,7 +120,6 @@ type Department implements Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
-  UH: String
   CR: String
   identifier: Identifier
   active: Boolean
@@ -118,9 +130,6 @@ type Department implements Organization {
   contact: ExtendedContactDetail
   partOf: Reference
   endpoint: Reference
-  AGREGA1: String
-  AGREGA2: String
-  AGREGA3: String
   COD_ESTATISTICO: [String]
   CHILDREN: [Int]
   DES_DEPARTAMENTO: String
@@ -132,7 +141,6 @@ type Service implements Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
-  UH: String
   CR: String
   identifier: Identifier
   active: Boolean
@@ -143,13 +151,8 @@ type Service implements Organization {
   contact: ExtendedContactDetail
   partOf: Reference
   endpoint: Reference
-  AGREGA1: String
-  AGREGA2: String
-  AGREGA3: String
   COD_ESTATISTICO: [String]
   CHILDREN: [Int]
-  DES_DEPARTAMENTO: String
-  COD_DEPARTAMENTO: Int
   DES_SERVICO: String
   COD_SERVICO: Int
 }
@@ -159,7 +162,6 @@ type Unit implements Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
-  UH: String
   CR: String
   identifier: Identifier
   active: Boolean
@@ -170,14 +172,7 @@ type Unit implements Organization {
   contact: ExtendedContactDetail
   partOf: Reference
   endpoint: Reference
-  AGREGA1: String
-  AGREGA2: String
-  AGREGA3: String
   COD_ESTATISTICO: [String]
-  DES_DEPARTAMENTO: String
-  COD_DEPARTAMENTO: Int
-  DES_SERVICO: String
-  COD_SERVICO: Int
   DES_UNIDADE: String
   COD_UNIDADE: Int
 }
@@ -187,7 +182,6 @@ type Specialty implements Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
-  UH: String
   CR: String
   identifier: Identifier
   active: Boolean
@@ -203,25 +197,31 @@ type Specialty implements Organization {
   AGREGA3: String
   DES_ESTATISTICO: String
   COD_ESTATISTICO: String
-  DES_DEPARTAMENTO: String
-  COD_DEPARTAMENTO: Int
-  DES_SERVICO: String
-  COD_SERVICO: Int
-  DES_UNIDADE: String
-  COD_UNIDADE: Int
 }
 
-type Query {
-  departments: [Department!]
+type DepartmentTree {
+  uhs: [UH!]
+  department: Department
   services: [Service!]
   units: [Unit!]
   specialties: [Specialty!]
-  resolvertest: String
-  organizations: [Organization!]
-  departmentById(id: ObjectId): Department
+}
+
+type Query {
+  departments(offset: Int, limit: Int): [Department!]
+  services(offset: Int, limit: Int): [Service!]
+  units(offset: Int, limit: Int): [Unit!]
+  specialties(offset: Int, limit: Int): [Specialty!]
+  uhs(offset: Int, limit: Int): [UH!]
+  depChildren(id: ObjectId!): [Service!]
+  serChildren(id: ObjectId!): [Unit!]
+  depTree(id: ObjectId!): DepartmentTree!
+  organizations(offset: Int, limit: Int): [Organization!]
+  departmentById(id: ObjectId!): Department
   departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
-  servicesByDep(cod: Int!): [Service!]
+  servicesByDep(offset: Int, limit: Int, cod: Int): [Service!]
+  departmentSearch(searchString: String!): [Department!]
 }
 
 directive @cacheControl(

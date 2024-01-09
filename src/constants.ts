@@ -1,10 +1,14 @@
 import 'dotenv/config';
 
 export const collectionNames = {
+  uh: 'uh',
   dept: 'dep',
   serv: 'ser',
   unit: 'uni',
   spec: 'spe',
+  contacts: 'contacts',
+  all: 'orgs',
+  rels: 'rels',
 };
 
 export const postgresUpdateQuery =
@@ -14,7 +18,7 @@ export const updateQuery = `SELECT * FROM AIDASA.UPDATES WHERE DATETIME < TO_TIM
 export const mongoConfig = {
   host: process.env.MONGOHOST,
   port: process.env.MONGOPORT,
-  db: 'mongots',
+  db: process.env.MONGODB,
 };
 
 export const mongoCString = `mongodb://${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.db}`;
