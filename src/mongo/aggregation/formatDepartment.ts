@@ -113,8 +113,8 @@ const formatDepartment = async () => {
               display: '$DES_DEPARTAMENTO',
             },
             partOf: {
-              reference: 'CHUSA',
-              display: 'Centro Hospitalar Universitário Santo António',
+              reference: '$UH',
+              display: '$UH',
             },
             __t: 'dept',
           },

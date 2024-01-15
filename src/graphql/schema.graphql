@@ -1,6 +1,8 @@
 scalar Date
 scalar ObjectId
 
+union AnyOrg = Unit | Service | Department | UH
+
 enum CacheControlScope {
   PUBLIC
   PRIVATE
@@ -112,7 +114,7 @@ type UH implements Organization {
   partOf: Reference
   endpoint: Reference
   COD_ESTATISTICO: [String]
-  CHILDREN: [Int]
+  children: [Department]
 }
 
 type Department implements Organization {
@@ -131,9 +133,10 @@ type Department implements Organization {
   partOf: Reference
   endpoint: Reference
   COD_ESTATISTICO: [String]
-  CHILDREN: [Int]
   DES_DEPARTAMENTO: String
   COD_DEPARTAMENTO: Int
+  children: [Service]
+  parents: [UH!]
 }
 
 type Service implements Organization {
@@ -152,9 +155,10 @@ type Service implements Organization {
   partOf: Reference
   endpoint: Reference
   COD_ESTATISTICO: [String]
-  CHILDREN: [Int]
   DES_SERVICO: String
   COD_SERVICO: Int
+  children: [Unit]
+  parent: Department
 }
 
 type Unit implements Organization {
@@ -175,6 +179,8 @@ type Unit implements Organization {
   COD_ESTATISTICO: [String]
   DES_UNIDADE: String
   COD_UNIDADE: Int
+  children: [Specialty]
+  parent: Service
 }
 
 type Specialty implements Organization {
@@ -197,30 +203,22 @@ type Specialty implements Organization {
   AGREGA3: String
   DES_ESTATISTICO: String
   COD_ESTATISTICO: String
-}
-
-type DepartmentTree {
-  uhs: [UH!]
-  department: Department
-  services: [Service!]
-  units: [Unit!]
-  specialties: [Specialty!]
+  parent: Unit
 }
 
 type Query {
+  uhs(offset: Int, limit: Int): [UH!]
   departments(offset: Int, limit: Int): [Department!]
   services(offset: Int, limit: Int): [Service!]
   units(offset: Int, limit: Int): [Unit!]
   specialties(offset: Int, limit: Int): [Specialty!]
-  uhs(offset: Int, limit: Int): [UH!]
-  depChildren(id: ObjectId!): [Service!]
-  serChildren(id: ObjectId!): [Unit!]
-  depTree(id: ObjectId!): DepartmentTree!
-  organizations(offset: Int, limit: Int): [Organization!]
-  departmentById(id: ObjectId!): Department
+  uhTree(id: ObjectId!): AnyOrg!
+  departmentById(id: ObjectId!): Department!
+  serviceById(id: ObjectId!): Service!
+  unitById(id: ObjectId!): Unit!
+  specialtyById(id: ObjectId!): Specialty!
   departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
-  servicesByDep(offset: Int, limit: Int, cod: Int): [Service!]
   departmentSearch(searchString: String!): [Department!]
 }
 

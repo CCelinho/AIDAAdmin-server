@@ -57,6 +57,10 @@ const formatUH = async () => {
            */
           {
             name: '$UH',
+            partOf: {
+              reference: 'CHUSA',
+              display: 'Centro Hospitalar Universitário Santo António',
+            },
             type: {
               coding: {
                 code: 'uh',
