@@ -32,7 +32,7 @@ export type Address = {
   use?: Maybe<Scalars['String']['output']>;
 };
 
-export type AnyOrg = Department | Service | Uh | Unit;
+export type AnyOrg = Department | Service | Specialty | Uh | Unit;
 
 export enum CacheControlScope {
   Private = 'PRIVATE',
@@ -150,7 +150,8 @@ export type Query = {
   services?: Maybe<Array<Service>>;
   specialties?: Maybe<Array<Specialty>>;
   specialtyById: Specialty;
-  uhTree: AnyOrg;
+  textSearch?: Maybe<Array<Maybe<Array<AnyOrg>>>>;
+  uhById: Uh;
   uhs?: Maybe<Array<Uh>>;
   unitById: Unit;
   units?: Maybe<Array<Unit>>;
@@ -205,7 +206,12 @@ export type QuerySpecialtyByIdArgs = {
 };
 
 
-export type QueryUhTreeArgs = {
+export type QueryTextSearchArgs = {
+  searchString: Scalars['String']['input'];
+};
+
+
+export type QueryUhByIdArgs = {
   id: Scalars['ObjectId']['input'];
 };
 
@@ -393,7 +399,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of union types */
 export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
-  AnyOrg: ( Department ) | ( Service ) | ( Uh ) | ( Unit );
+  AnyOrg: ( Department ) | ( Service ) | ( Specialty ) | ( Uh ) | ( Unit );
 };
 
 /** Mapping of interface types */
@@ -477,7 +483,7 @@ export type AddressResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type AnyOrgResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnyOrg'] = ResolversParentTypes['AnyOrg']> = {
-  __resolveType: TypeResolveFn<'Department' | 'Service' | 'UH' | 'Unit', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Department' | 'Service' | 'Specialty' | 'UH' | 'Unit', ParentType, ContextType>;
 };
 
 export type CodeableConceptResolvers<ContextType = any, ParentType extends ResolversParentTypes['CodeableConcept'] = ResolversParentTypes['CodeableConcept']> = {
@@ -599,7 +605,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesArgs>>;
   specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType, Partial<QuerySpecialtiesArgs>>;
   specialtyById?: Resolver<ResolversTypes['Specialty'], ParentType, ContextType, RequireFields<QuerySpecialtyByIdArgs, 'id'>>;
-  uhTree?: Resolver<ResolversTypes['AnyOrg'], ParentType, ContextType, RequireFields<QueryUhTreeArgs, 'id'>>;
+  textSearch?: Resolver<Maybe<Array<Maybe<Array<ResolversTypes['AnyOrg']>>>>, ParentType, ContextType, RequireFields<QueryTextSearchArgs, 'searchString'>>;
+  uhById?: Resolver<ResolversTypes['UH'], ParentType, ContextType, RequireFields<QueryUhByIdArgs, 'id'>>;
   uhs?: Resolver<Maybe<Array<ResolversTypes['UH']>>, ParentType, ContextType, Partial<QueryUhsArgs>>;
   unitById?: Resolver<ResolversTypes['Unit'], ParentType, ContextType, RequireFields<QueryUnitByIdArgs, 'id'>>;
   units?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType, Partial<QueryUnitsArgs>>;

@@ -128,12 +128,33 @@ export const resolvers: Resolvers = {
         throw new Error('No specialties found');
       }
     },
+    uhById: async (_, { id }) => {
+      const uho = await uh.findById(id);
+      if (!uho) {
+        throw new Error('UH not found: ' + id);
+      }
+      return uho.toObject();
+    },
     departmentById: async (_, { id }) => {
       const dep = await dept.findById(id);
       if (!dep) {
         throw new Error('Department not found: ' + id);
       }
       return dep.toObject();
+    },
+    serviceById: async (_, { id }) => {
+      const ser = await serv.findById(id);
+      if (!ser) {
+        throw new Error('Service not found: ' + id);
+      }
+      return ser.toObject();
+    },
+    unitById: async (_, { id }) => {
+      const uni = await unit.findById(id);
+      if (!uni) {
+        throw new Error('Unit not found: ' + id);
+      }
+      return uni.toObject();
     },
     specialtyById: async (_, { id }) => {
       const spe = await spec.findById(id);
@@ -169,6 +190,45 @@ export const resolvers: Resolvers = {
         return deps;
       } catch {
         throw new Error('No departments found');
+      }
+    },
+    textSearch: async (_, { searchString }) => {
+      try {
+        const uhs = await uh.find({
+          $or: [
+            { name: { $regex: searchString, $options: 'i' } },
+            { 'partOf.display': { $regex: searchString, $options: 'i' } },
+          ],
+        });
+        const deps = await dept.find({
+          $or: [
+            { name: { $regex: searchString, $options: 'i' } },
+            { 'partOf.display': { $regex: searchString, $options: 'i' } },
+          ],
+        });
+        const sers = await serv.find({
+          $or: [
+            { name: { $regex: searchString, $options: 'i' } },
+            { 'partOf.display': { $regex: searchString, $options: 'i' } },
+          ],
+        });
+        const unis = await unit.find({
+          $or: [
+            { name: { $regex: searchString, $options: 'i' } },
+            { 'partOf.display': { $regex: searchString, $options: 'i' } },
+          ],
+        });
+        const spes = await spec.find({
+          $or: [
+            { name: { $regex: searchString, $options: 'i' } },
+            { 'partOf.display': { $regex: searchString, $options: 'i' } },
+          ],
+        });
+
+        const result = [uhs, deps, sers, unis, spes];
+        return result;
+      } catch {
+        throw new Error('String search failed ' + searchString);
       }
     },
   },

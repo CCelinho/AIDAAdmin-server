@@ -1,7 +1,7 @@
 scalar Date
 scalar ObjectId
 
-union AnyOrg = Unit | Service | Department | UH
+union AnyOrg = Unit | Service | Department | UH | Specialty
 
 enum CacheControlScope {
   PUBLIC
@@ -212,7 +212,7 @@ type Query {
   services(offset: Int, limit: Int): [Service!]
   units(offset: Int, limit: Int): [Unit!]
   specialties(offset: Int, limit: Int): [Specialty!]
-  uhTree(id: ObjectId!): AnyOrg!
+  uhById(id: ObjectId!): UH!
   departmentById(id: ObjectId!): Department!
   serviceById(id: ObjectId!): Service!
   unitById(id: ObjectId!): Unit!
@@ -220,6 +220,7 @@ type Query {
   departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
   departmentSearch(searchString: String!): [Department!]
+  textSearch(searchString: String!): [[AnyOrg!]]
 }
 
 directive @cacheControl(
