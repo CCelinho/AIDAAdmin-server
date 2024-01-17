@@ -292,6 +292,7 @@ export type Uh = Organization & {
   COD_ESTATISTICO?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   CR?: Maybe<Scalars['String']['output']>;
   ID_CP?: Maybe<Scalars['String']['output']>;
+  UH?: Maybe<Scalars['String']['output']>;
   VIG_FIM?: Maybe<Scalars['Date']['output']>;
   VIG_INI?: Maybe<Scalars['Date']['output']>;
   _id?: Maybe<Scalars['ObjectId']['output']>;
@@ -671,6 +672,7 @@ export type UhResolvers<ContextType = any, ParentType extends ResolversParentTyp
   COD_ESTATISTICO?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  UH?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;

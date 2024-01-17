@@ -103,6 +103,7 @@ type UH implements Organization {
   ID_CP: String
   VIG_INI: Date
   VIG_FIM: Date
+  UH: String
   CR: String
   identifier: Identifier
   active: Boolean
