@@ -137,6 +137,8 @@ export const resolvers: Resolvers = {
     },
     departmentById: async (_, { id }) => {
       const dep = await dept.findById(id);
+      console.log(id);
+      console.log(dep);
       if (!dep) {
         throw new Error('Department not found: ' + id);
       }

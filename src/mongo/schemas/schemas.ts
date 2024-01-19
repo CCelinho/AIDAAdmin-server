@@ -209,7 +209,7 @@ const contactDataSchema = new mongoose.Schema(
 );
 
 export const uhSchema = new mongoose.Schema({
-  UH: [{ type: String }],
+  UH: { type: String },
   COD_ESTATISTICO: [{ type: String }],
 });
 
