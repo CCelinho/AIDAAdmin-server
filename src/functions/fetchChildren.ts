@@ -1,44 +1,52 @@
-import { collectionNames } from '../constants';
-import {
-  Department,
-  Service,
-  Specialty,
-  Uh,
-  Unit,
-} from '../graphql/resolvers-types';
+import { Department, Service, Uh, Unit } from '../graphql/resolvers-types';
 import { dept, relationship, serv, spec, unit } from '../mongo/schemas/schemas';
 
-type parent = Uh | Department | Service | Unit | Specialty;
-
-const fetchChildren = async (parent: parent, modelCode: string) => {
+export const fetchUhChildren = async (parent: Uh) => {
   const id = parent._id;
 
-  const collection = getModel(modelCode);
-
   const childrenIDs = (
-    await relationship.find({ parent: id }).select({ _id: 0, child: 1 })
-  ).map((child) => child.toObject().child);
+    await relationship
+      .find({ department: id })
+      .select({ _id: 0, department: 1 })
+  ).map((child) => child.toObject().department);
 
-  const result = await collection.find({ _id: { $in: childrenIDs } });
+  const result = await dept.find({ _id: { $in: childrenIDs } });
 
   return result;
 };
 
-const getModel = (modelCode: string) => {
-  switch (modelCode) {
-    case collectionNames.uh:
-      return dept;
-    case collectionNames.dept:
-      return serv;
-    case collectionNames.serv:
-      return unit;
-    case collectionNames.unit:
-      return spec;
-    default:
-      throw new Error(
-        `fetchChildren: Unsupported organization type: ${modelCode}`
-      );
-  }
+export const fetchDeptChildren = async (parent: Department) => {
+  const id = parent._id;
+
+  const childrenIDs = (
+    await relationship.find({ service: id }).select({ _id: 0, service: 1 })
+  ).map((child) => child.toObject().service);
+
+  const result = await serv.find({ _id: { $in: childrenIDs } });
+
+  return result;
 };
 
-export default fetchChildren;
+export const fetchServChildren = async (parent: Service) => {
+  const id = parent._id;
+
+  const childrenIDs = (
+    await relationship.find({ unit: id }).select({ _id: 0, unit: 1 })
+  ).map((child) => child.toObject().unit);
+
+  const result = await unit.find({ _id: { $in: childrenIDs } });
+
+  return result;
+};
+
+export const fetchUnitChildren = async (parent: Unit) => {
+  const id = parent._id;
+
+  const childrenIDs = (
+    await relationship.find({ specialty: id }).select({ _id: 0, specialty: 1 })
+  ).map((child) => child.toObject().specialty);
+
+  const result = await spec.find({ _id: { $in: childrenIDs } });
+
+  return result;
+};

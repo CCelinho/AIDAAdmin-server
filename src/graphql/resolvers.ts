@@ -7,9 +7,17 @@ import {
   unit,
   relationship,
 } from '../mongo/schemas/schemas';
-import fetchChildren from '../functions/fetchChildren';
-import { collectionNames } from '../constants';
-import fetchParent from '../functions/fetchParent';
+import {
+  fetchDeptChildren,
+  fetchServChildren,
+  fetchUnitChildren,
+  fetchUhChildren,
+} from '../functions/fetchChildren';
+import {
+  fetchServParent,
+  fetchSpecParent,
+  fetchUnitParent,
+} from '../functions/fetchParent';
 
 export const resolvers: Resolvers = {
   AnyOrg: {
@@ -32,18 +40,21 @@ export const resolvers: Resolvers = {
   },
   UH: {
     children: async (parent) => {
-      return fetchChildren(parent, collectionNames.uh);
+      return fetchUhChildren(parent);
     },
   },
   Department: {
     children: async (parent) => {
-      return fetchChildren(parent, collectionNames.dept);
+      return fetchDeptChildren(parent);
     },
     parents: async (child) => {
       const id = child._id;
 
       const parentIDs = (
-        await relationship.find({ child: id }).select({ _id: 0, parent: 1 })
+        await relationship
+          .find({ department: id })
+          .distinct('uh')
+          .select({ _id: 0, uh: 1 })
       ).map((parent) => parent.toObject().parent);
 
       const result = await uh.find({ _id: { $in: parentIDs } });
@@ -53,23 +64,23 @@ export const resolvers: Resolvers = {
   },
   Service: {
     children: async (parent) => {
-      return fetchChildren(parent, collectionNames.serv);
+      return fetchServChildren(parent);
     },
     parent: async (child) => {
-      return fetchParent(child, collectionNames.serv);
+      return fetchServParent(child);
     },
   },
   Unit: {
     children: async (parent) => {
-      return fetchChildren(parent, collectionNames.unit);
+      return fetchUnitChildren(parent);
     },
     parent: async (child) => {
-      return fetchParent(child, collectionNames.unit);
+      return fetchUnitParent(child);
     },
   },
   Specialty: {
     parent: async (child) => {
-      return fetchParent(child, collectionNames.spec);
+      return fetchSpecParent(child);
     },
   },
   Query: {

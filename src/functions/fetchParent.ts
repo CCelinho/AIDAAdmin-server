@@ -1,44 +1,38 @@
-import { dept, relationship, serv, uh, unit } from '../mongo/schemas/schemas';
-import {
-  Department,
-  Service,
-  Specialty,
-  Uh,
-  Unit,
-} from '../graphql/resolvers-types';
-import { collectionNames } from '../constants';
+import { dept, relationship, serv, unit } from '../mongo/schemas/schemas';
+import { Service, Specialty, Unit } from '../graphql/resolvers-types';
 
-type child = Uh | Department | Service | Unit | Specialty;
-
-const fetchParent = async (child: child, modelCode: string) => {
+export const fetchServParent = async (child: Service) => {
   const id = child._id;
 
-  const collection = getModel(modelCode);
+  const parentID = await relationship
+    .findOne({ service: id })
+    .select({ _id: 0, department: 1 });
 
-  const parentID = (
-    await relationship.find({ child: id }).select({ _id: 0, parent: 1 })
-  ).map((parent) => parent.toObject().parent);
-
-  const result = await collection.findById(parentID);
+  const result = await dept.findById(parentID);
 
   return result;
 };
 
-const getModel = (modelCode: string) => {
-  switch (modelCode) {
-    case collectionNames.dept:
-      return uh;
-    case collectionNames.serv:
-      return dept;
-    case collectionNames.unit:
-      return serv;
-    case collectionNames.spec:
-      return unit;
-    default:
-      throw new Error(
-        `fetchChildren: Unsupported organization type: ${modelCode}`
-      );
-  }
+export const fetchUnitParent = async (child: Unit) => {
+  const id = child._id;
+
+  const parentID = await relationship
+    .findOne({ unit: id })
+    .select({ _id: 0, service: 1 });
+
+  const result = await serv.findById(parentID);
+
+  return result;
 };
 
-export default fetchParent;
+export const fetchSpecParent = async (child: Specialty) => {
+  const id = child._id;
+
+  const parentID = await relationship
+    .findOne({ specialty: id })
+    .select({ _id: 0, unit: 1 });
+
+  const result = await unit.findById(parentID);
+
+  return result;
+};

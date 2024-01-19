@@ -168,9 +168,11 @@ export const specialtySchema = extendSchema(
 
 const relationshipSchema = new mongoose.Schema(
   {
-    parent: { type: mongoose.Types.ObjectId },
-    child: { type: mongoose.Types.ObjectId },
-    type: { type: Number },
+    uh: { type: mongoose.Types.ObjectId },
+    department: { type: mongoose.Types.ObjectId },
+    service: { type: mongoose.Types.ObjectId },
+    unit: { type: mongoose.Types.ObjectId },
+    specialty: { type: mongoose.Types.ObjectId },
   },
   { collection: cn.rels }
 );

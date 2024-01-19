@@ -19,6 +19,7 @@ import formatUnit from '../mongo/aggregation/formatUnit';
 import formatService from '../mongo/aggregation/formatService';
 import formatDepartment from '../mongo/aggregation/formatDepartment';
 import formatUH from '../mongo/aggregation/formatUH';
+import formatRelationships from '../mongo/aggregation/formatRelationships';
 
 export const checkForUpdates = async (lastCheckTimestamp: string) => {
   console.log('Last check for updates: ' + lastCheckTimestamp);
@@ -74,6 +75,7 @@ export const checkForUpdates = async (lastCheckTimestamp: string) => {
       await formatService();
       await formatDepartment();
       await formatUH();
+      await formatRelationships();
 
       const speCount = await specialty.countDocuments();
       const uniCount = await uni.countDocuments();

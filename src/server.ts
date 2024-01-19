@@ -21,7 +21,7 @@ const typeDefs = readFileSync('./src/graphql/schema.graphql', 'utf-8');
 
 const bootstrapServer = async () => {
   await mongoConnect(mongoCString);
-  // await forceUpdate();
+  await forceUpdate();
   let lastCheckTimestamp = new Date().toISOString();
   cron.schedule('0 * * * *', async () => {
     checkForUpdates(lastCheckTimestamp);
