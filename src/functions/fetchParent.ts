@@ -4,9 +4,11 @@ import { Service, Specialty, Unit } from '../graphql/resolvers-types';
 export const fetchServParent = async (child: Service) => {
   const id = child._id;
 
-  const parentID = await relationship
-    .findOne({ service: id })
-    .select({ _id: 0, department: 1 });
+  const parentID = (
+    await relationship
+      .findOne({ service: id })
+      .select({ _id: 0, department: 1 })
+  )?.toObject().department;
 
   const result = await dept.findById(parentID);
 
@@ -16,9 +18,9 @@ export const fetchServParent = async (child: Service) => {
 export const fetchUnitParent = async (child: Unit) => {
   const id = child._id;
 
-  const parentID = await relationship
-    .findOne({ unit: id })
-    .select({ _id: 0, service: 1 });
+  const parentID = (
+    await relationship.findOne({ unit: id }).select({ _id: 0, service: 1 })
+  )?.toObject().service;
 
   const result = await serv.findById(parentID);
 
@@ -28,9 +30,9 @@ export const fetchUnitParent = async (child: Unit) => {
 export const fetchSpecParent = async (child: Specialty) => {
   const id = child._id;
 
-  const parentID = await relationship
-    .findOne({ specialty: id })
-    .select({ _id: 0, unit: 1 });
+  const parentID = (
+    await relationship.findOne({ specialty: id }).select({ _id: 0, unit: 1 })
+  )?.toObject().unit;
 
   const result = await unit.findById(parentID);
 

@@ -18,6 +18,7 @@ import {
   fetchSpecParent,
   fetchUnitParent,
 } from '../functions/fetchParent';
+import mongoose from 'mongoose';
 
 export const resolvers: Resolvers = {
   AnyOrg: {
@@ -50,12 +51,9 @@ export const resolvers: Resolvers = {
     parents: async (child) => {
       const id = child._id;
 
-      const parentIDs = (
-        await relationship
-          .find({ department: id })
-          .distinct('uh')
-          .select({ _id: 0, uh: 1 })
-      ).map((parent) => parent.toObject().parent);
+      const parentIDs = await relationship
+        .find({ department: id })
+        .distinct('uh');
 
       const result = await uh.find({ _id: { $in: parentIDs } });
 
