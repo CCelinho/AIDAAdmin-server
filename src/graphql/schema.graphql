@@ -1,5 +1,6 @@
 scalar Date
 scalar ObjectId
+scalar UUID
 
 union AnyOrg = Unit | Service | Department | UH | Specialty
 
@@ -96,6 +97,8 @@ interface Organization {
   contact: ExtendedContactDetail
   partOf: Reference
   endpoint: Reference
+  uuid: UUID
+  errorflag: Boolean
 }
 
 type UH implements Organization {
@@ -116,6 +119,8 @@ type UH implements Organization {
   endpoint: Reference
   COD_ESTATISTICO: [String]
   children: [Department]
+  uuid: UUID
+  errorflag: Boolean
 }
 
 type Department implements Organization {
@@ -138,6 +143,8 @@ type Department implements Organization {
   COD_DEPARTAMENTO: Int
   children: [Service]
   parents: [UH!]
+  uuid: UUID
+  errorflag: Boolean
 }
 
 type Service implements Organization {
@@ -160,6 +167,8 @@ type Service implements Organization {
   COD_SERVICO: Int
   children: [Unit]
   parent: Department
+  uuid: UUID
+  errorflag: Boolean
 }
 
 type Unit implements Organization @cacheControl(maxAge: 90) {
@@ -182,6 +191,8 @@ type Unit implements Organization @cacheControl(maxAge: 90) {
   COD_UNIDADE: Int
   children: [Specialty]
   parent: Service
+  uuid: UUID
+  errorflag: Boolean
 }
 
 type Specialty implements Organization @cacheControl(maxAge: 90) {
@@ -205,6 +216,8 @@ type Specialty implements Organization @cacheControl(maxAge: 90) {
   DES_ESTATISTICO: String
   COD_ESTATISTICO: String
   parent: Unit
+  uuid: UUID
+  errorflag: Boolean
 }
 
 type Query {

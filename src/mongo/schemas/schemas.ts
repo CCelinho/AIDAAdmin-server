@@ -1,6 +1,7 @@
 import mongoose, { InferSchemaType } from 'mongoose';
 import { collectionNames as cn, collectionNames } from '../../constants';
 import extendSchema from './schemaExtender';
+import { UUID } from 'mongodb';
 
 const periodSchema = new mongoose.Schema({
   start: { type: Date },
@@ -211,6 +212,14 @@ const contactDataSchema = new mongoose.Schema(
   { collection: cn.contacts }
 );
 
+const partyRelSchema = new mongoose.Schema(
+  {
+    source: { type: UUID },
+    target: { type: UUID },
+  },
+  { collection: 'party_relationships' }
+);
+
 export const uhSchema = new mongoose.Schema({
   UH: { type: String },
   COD_ESTATISTICO: [{ type: String }],
@@ -251,6 +260,7 @@ export const service = mongoose.model('service', serviceSchema);
 export const uni = mongoose.model('uni', uniSchema);
 export const specialty = mongoose.model('specialty', specialtySchema);
 export const contactData = mongoose.model('contacts', contactDataSchema);
+export const partyRel = mongoose.model('partyRel', partyRelSchema);
 export const relationship = mongoose.model('relationship', relationshipSchema);
 
 type uh = InferSchemaType<typeof uhospSchema>;

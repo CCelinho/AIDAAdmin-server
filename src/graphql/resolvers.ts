@@ -18,6 +18,7 @@ import {
   fetchSpecParent,
   fetchUnitParent,
 } from '../functions/fetchParent';
+import findErrors from '../functions/finderrors';
 
 export const resolvers: Resolvers = {
   AnyOrg: {
@@ -42,6 +43,9 @@ export const resolvers: Resolvers = {
     children: async (parent) => {
       return fetchUhChildren(parent);
     },
+    errorflag: async (uho) => {
+      return await findErrors(uho);
+    },
   },
   Department: {
     children: async (parent) => {
@@ -58,6 +62,9 @@ export const resolvers: Resolvers = {
 
       return result;
     },
+    errorflag: async (dep) => {
+      return await findErrors(dep);
+    },
   },
   Service: {
     children: async (parent) => {
@@ -65,6 +72,9 @@ export const resolvers: Resolvers = {
     },
     parent: async (child) => {
       return fetchServParent(child);
+    },
+    errorflag: async (ser) => {
+      return await findErrors(ser);
     },
   },
   Unit: {
@@ -74,10 +84,16 @@ export const resolvers: Resolvers = {
     parent: async (child) => {
       return fetchUnitParent(child);
     },
+    errorflag: async (uni) => {
+      return await findErrors(uni);
+    },
   },
   Specialty: {
     parent: async (child) => {
       return fetchSpecParent(child);
+    },
+    errorflag: async (spe) => {
+      return await findErrors(spe);
     },
   },
   Query: {

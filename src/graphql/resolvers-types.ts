@@ -16,6 +16,7 @@ export type Scalars = {
   Float: { input: number; output: number; }
   Date: { input: any; output: any; }
   ObjectId: { input: any; output: any; }
+  UUID: { input: any; output: any; }
 };
 
 export type Address = {
@@ -78,11 +79,13 @@ export type Department = Organization & {
   contact?: Maybe<ExtendedContactDetail>;
   description?: Maybe<Scalars['String']['output']>;
   endpoint?: Maybe<Reference>;
+  errorflag?: Maybe<Scalars['Boolean']['output']>;
   identifier?: Maybe<Identifier>;
   name?: Maybe<Scalars['String']['output']>;
   parents?: Maybe<Array<Uh>>;
   partOf?: Maybe<Reference>;
   type?: Maybe<CodeableConcept>;
+  uuid?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type ExtendedContactDetail = {
@@ -127,10 +130,12 @@ export type Organization = {
   contact?: Maybe<ExtendedContactDetail>;
   description?: Maybe<Scalars['String']['output']>;
   endpoint?: Maybe<Reference>;
+  errorflag?: Maybe<Scalars['Boolean']['output']>;
   identifier?: Maybe<Identifier>;
   name?: Maybe<Scalars['String']['output']>;
   partOf?: Maybe<Reference>;
   type?: Maybe<CodeableConcept>;
+  uuid?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type Period = {
@@ -256,11 +261,13 @@ export type Service = Organization & {
   contact?: Maybe<ExtendedContactDetail>;
   description?: Maybe<Scalars['String']['output']>;
   endpoint?: Maybe<Reference>;
+  errorflag?: Maybe<Scalars['Boolean']['output']>;
   identifier?: Maybe<Identifier>;
   name?: Maybe<Scalars['String']['output']>;
   parent?: Maybe<Department>;
   partOf?: Maybe<Reference>;
   type?: Maybe<CodeableConcept>;
+  uuid?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type Specialty = Organization & {
@@ -280,11 +287,13 @@ export type Specialty = Organization & {
   contact?: Maybe<ExtendedContactDetail>;
   description?: Maybe<Scalars['String']['output']>;
   endpoint?: Maybe<Reference>;
+  errorflag?: Maybe<Scalars['Boolean']['output']>;
   identifier?: Maybe<Identifier>;
   name?: Maybe<Scalars['String']['output']>;
   parent?: Maybe<Unit>;
   partOf?: Maybe<Reference>;
   type?: Maybe<CodeableConcept>;
+  uuid?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type Uh = Organization & {
@@ -302,10 +311,12 @@ export type Uh = Organization & {
   contact?: Maybe<ExtendedContactDetail>;
   description?: Maybe<Scalars['String']['output']>;
   endpoint?: Maybe<Reference>;
+  errorflag?: Maybe<Scalars['Boolean']['output']>;
   identifier?: Maybe<Identifier>;
   name?: Maybe<Scalars['String']['output']>;
   partOf?: Maybe<Reference>;
   type?: Maybe<CodeableConcept>;
+  uuid?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type Unit = Organization & {
@@ -324,11 +335,13 @@ export type Unit = Organization & {
   contact?: Maybe<ExtendedContactDetail>;
   description?: Maybe<Scalars['String']['output']>;
   endpoint?: Maybe<Reference>;
+  errorflag?: Maybe<Scalars['Boolean']['output']>;
   identifier?: Maybe<Identifier>;
   name?: Maybe<Scalars['String']['output']>;
   parent?: Maybe<Service>;
   partOf?: Maybe<Reference>;
   type?: Maybe<CodeableConcept>;
+  uuid?: Maybe<Scalars['UUID']['output']>;
 };
 
 
@@ -432,6 +445,7 @@ export type ResolversTypes = {
   Specialty: ResolverTypeWrapper<Specialty>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   UH: ResolverTypeWrapper<Uh>;
+  UUID: ResolverTypeWrapper<Scalars['UUID']['output']>;
   Unit: ResolverTypeWrapper<Unit>;
 };
 
@@ -458,6 +472,7 @@ export type ResolversParentTypes = {
   Specialty: Specialty;
   String: Scalars['String']['output'];
   UH: Uh;
+  UUID: Scalars['UUID']['output'];
   Unit: Unit;
 };
 
@@ -529,11 +544,13 @@ export type DepartmentResolvers<ContextType = any, ParentType extends ResolversP
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   endpoint?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  errorflag?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   parents?: Resolver<Maybe<Array<ResolversTypes['UH']>>, ParentType, ContextType>;
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
+  uuid?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -584,10 +601,12 @@ export type OrganizationResolvers<ContextType = any, ParentType extends Resolver
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   endpoint?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  errorflag?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
+  uuid?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
 };
 
 export type PeriodResolvers<ContextType = any, ParentType extends ResolversParentTypes['Period'] = ResolversParentTypes['Period']> = {
@@ -636,11 +655,13 @@ export type ServiceResolvers<ContextType = any, ParentType extends ResolversPare
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   endpoint?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  errorflag?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   parent?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType>;
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
+  uuid?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -660,11 +681,13 @@ export type SpecialtyResolvers<ContextType = any, ParentType extends ResolversPa
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   endpoint?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  errorflag?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   parent?: Resolver<Maybe<ResolversTypes['Unit']>, ParentType, ContextType>;
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
+  uuid?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -682,12 +705,18 @@ export type UhResolvers<ContextType = any, ParentType extends ResolversParentTyp
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   endpoint?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  errorflag?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
+  uuid?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
+  name: 'UUID';
+}
 
 export type UnitResolvers<ContextType = any, ParentType extends ResolversParentTypes['Unit'] = ResolversParentTypes['Unit']> = {
   COD_ESTATISTICO?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
@@ -704,11 +733,13 @@ export type UnitResolvers<ContextType = any, ParentType extends ResolversParentT
   contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   endpoint?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  errorflag?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   parent?: Resolver<Maybe<ResolversTypes['Service']>, ParentType, ContextType>;
   partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
+  uuid?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -731,6 +762,7 @@ export type Resolvers<ContextType = any> = {
   Service?: ServiceResolvers<ContextType>;
   Specialty?: SpecialtyResolvers<ContextType>;
   UH?: UhResolvers<ContextType>;
+  UUID?: GraphQLScalarType;
   Unit?: UnitResolvers<ContextType>;
 };
 
