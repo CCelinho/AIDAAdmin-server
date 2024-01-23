@@ -1,5 +1,6 @@
 import { department } from '../schemas/schemas';
 import { collectionNames } from '../../constants';
+import { UUID } from 'mongodb';
 
 const formatDepartment = async () => {
   await department
@@ -100,6 +101,15 @@ const formatDepartment = async () => {
            * expression: The expression.
            */
           {
+            uuid: {
+              $function: {
+                body: function () {
+                  return new UUID();
+                },
+                args: [],
+                lang: 'js',
+              },
+            },
             type: {
               coding: {
                 code: 'dept',

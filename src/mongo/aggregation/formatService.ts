@@ -1,5 +1,6 @@
 import { service } from '../schemas/schemas';
 import { collectionNames } from '../../constants';
+import { UUID } from 'mongodb';
 
 const formatService = async () => {
   await service
@@ -105,6 +106,15 @@ const formatService = async () => {
            * expression: The expression.
            */
           {
+            uuid: {
+              $function: {
+                body: function () {
+                  return new UUID();
+                },
+                args: [],
+                lang: 'js',
+              },
+            },
             type: {
               coding: {
                 code: 'serv',

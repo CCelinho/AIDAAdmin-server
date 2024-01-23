@@ -4,7 +4,7 @@ import { dept, relationship, serv, spec, unit } from '../mongo/schemas/schemas';
 export const fetchUhChildren = async (parent: Uh) => {
   const id = parent._id;
 
-  const childrenIDs = (
+  const childrenIDs = await (
     await relationship.find({ uh: id }).select({ _id: 0, department: 1 })
   ).map((child) => child.toObject().department);
 

@@ -162,7 +162,7 @@ type Service implements Organization {
   parent: Department
 }
 
-type Unit implements Organization {
+type Unit implements Organization @cacheControl(maxAge: 90) {
   _id: ObjectId
   ID_CP: String
   VIG_INI: Date
@@ -184,7 +184,7 @@ type Unit implements Organization {
   parent: Service
 }
 
-type Specialty implements Organization {
+type Specialty implements Organization @cacheControl(maxAge: 90) {
   _id: ObjectId
   ID_CP: String
   VIG_INI: Date

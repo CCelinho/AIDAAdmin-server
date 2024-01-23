@@ -2,6 +2,7 @@
 import { readFileSync } from 'fs';
 import pg from 'pg';
 import 'dotenv/config';
+import { v4 as uuid } from 'uuid';
 
 // Modules
 import { pgConfig, postgresUpdateQuery } from '../constants';
@@ -13,6 +14,11 @@ import {
   department,
   uhosp,
   base,
+  spec,
+  unit,
+  serv,
+  dept,
+  uh,
 } from '../mongo/schemas/schemas';
 import formatSpecialty from '../mongo/aggregation/formatSpecialty';
 import formatUnit from '../mongo/aggregation/formatUnit';
@@ -20,6 +26,7 @@ import formatService from '../mongo/aggregation/formatService';
 import formatDepartment from '../mongo/aggregation/formatDepartment';
 import formatUH from '../mongo/aggregation/formatUH';
 import formatRelationships from '../mongo/aggregation/formatRelationships';
+import { UUID } from 'mongodb';
 
 export const checkForUpdates = async (lastCheckTimestamp: string) => {
   console.log('Last check for updates: ' + lastCheckTimestamp);

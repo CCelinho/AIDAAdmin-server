@@ -18,7 +18,6 @@ import {
   fetchSpecParent,
   fetchUnitParent,
 } from '../functions/fetchParent';
-import mongoose from 'mongoose';
 
 export const resolvers: Resolvers = {
   AnyOrg: {

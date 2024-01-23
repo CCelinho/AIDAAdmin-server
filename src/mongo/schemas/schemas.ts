@@ -79,6 +79,7 @@ const extendedContactDetailSchema = new mongoose.Schema({
 // Organizations
 const baseSchema = new mongoose.Schema(
   {
+    uuid: { type: mongoose.Schema.Types.UUID },
     ID_CP: { type: String },
     VIG_INI: { type: Date },
     VIG_FIM: { type: Date },

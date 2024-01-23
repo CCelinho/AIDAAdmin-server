@@ -1,5 +1,6 @@
 import { uni } from '../schemas/schemas';
 import { collectionNames } from '../../constants';
+import { UUID } from 'mongodb';
 
 const formatUnit = async () => {
   await uni
@@ -54,6 +55,15 @@ const formatUnit = async () => {
            * expression: The expression.
            */
           {
+            uuid: {
+              $function: {
+                body: function () {
+                  return new UUID();
+                },
+                args: [],
+                lang: 'js',
+              },
+            },
             type: {
               coding: {
                 code: 'unit',

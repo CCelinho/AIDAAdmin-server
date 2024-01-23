@@ -1,5 +1,6 @@
 import { uhosp } from '../schemas/schemas';
 import { collectionNames } from '../../constants';
+import { UUID } from 'mongodb';
 
 const formatUH = async () => {
   await uhosp
@@ -56,6 +57,15 @@ const formatUH = async () => {
            * expression: The expression.
            */
           {
+            uuid: {
+              $function: {
+                body: function () {
+                  return new UUID();
+                },
+                args: [],
+                lang: 'js',
+              },
+            },
             name: '$UH',
             partOf: {
               reference: 'CHUSA',

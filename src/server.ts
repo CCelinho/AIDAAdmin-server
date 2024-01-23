@@ -21,7 +21,7 @@ const typeDefs = readFileSync('./src/graphql/schema.graphql', 'utf-8');
 
 const bootstrapServer = async () => {
   await mongoConnect(mongoCString);
-  // await forceUpdate();
+  await forceUpdate();
   let lastCheckTimestamp = new Date().toISOString();
   cron.schedule('0 * * * *', async () => {
     checkForUpdates(lastCheckTimestamp);
@@ -38,7 +38,6 @@ const bootstrapServer = async () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use('/graphql', expressMiddleware(server));
-
   app.get('/graphql');
 
   app.listen(port, () => {
