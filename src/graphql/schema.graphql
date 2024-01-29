@@ -101,6 +101,25 @@ interface Organization {
   errorflag: Boolean
 }
 
+type Base {
+  _id: ObjectId
+  ID_CP: String
+  VIG_INI: Date
+  VIG_FIM: Date
+  CR: String
+  identifier: Identifier
+  active: Boolean
+  type: CodeableConcept
+  name: String
+  alias: String
+  description: String
+  contact: ExtendedContactDetail
+  partOf: Reference
+  endpoint: Reference
+  uuid: UUID
+  errorflag: Boolean
+}
+
 type UH implements Organization {
   _id: ObjectId
   ID_CP: String
@@ -220,6 +239,22 @@ type Specialty implements Organization @cacheControl(maxAge: 90) {
   errorflag: Boolean
 }
 
+type RelationshipLine {
+  uh: UH
+  department: Department
+  service: Service
+  unit: Unit
+  specialty: Specialty
+}
+
+type OrgSet {
+  uhs: [UH!]
+  departments: [Department!]
+  services: [Service!]
+  units: [Unit!]
+  specialties: [Specialty!]
+}
+
 type Query {
   uhs(offset: Int, limit: Int): [UH!]
   departments(offset: Int, limit: Int): [Department!]
@@ -231,10 +266,13 @@ type Query {
   serviceById(id: ObjectId!): Service!
   unitById(id: ObjectId!): Unit!
   specialtyById(id: ObjectId!): Specialty!
+  everythingBySpec(specId: ObjectId!): RelationshipLine!
+  everythingByUnit(unitId: ObjectId!): RelationshipLine!
+  everythingByServ(servId: ObjectId!): RelationshipLine!
   departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
   departmentSearch(searchString: String!): [Department!]
-  textSearch(searchString: String!): [[AnyOrg!]]
+  textSearch(searchString: String!): OrgSet!
 }
 
 directive @cacheControl(

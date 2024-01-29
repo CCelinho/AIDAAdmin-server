@@ -1,7 +1,6 @@
 import mongoose, { InferSchemaType } from 'mongoose';
 import { collectionNames as cn, collectionNames } from '../../constants';
 import extendSchema from './schemaExtender';
-import { UUID } from 'mongodb';
 
 const periodSchema = new mongoose.Schema({
   start: { type: Date },
@@ -80,7 +79,7 @@ const extendedContactDetailSchema = new mongoose.Schema({
 // Organizations
 const baseSchema = new mongoose.Schema(
   {
-    uuid: { type: mongoose.Schema.Types.UUID },
+    uuid: { type: mongoose.Types.UUID },
     ID_CP: { type: String },
     VIG_INI: { type: Date },
     VIG_FIM: { type: Date },
@@ -214,8 +213,8 @@ const contactDataSchema = new mongoose.Schema(
 
 const partyRelSchema = new mongoose.Schema(
   {
-    source: { type: UUID },
-    target: { type: UUID },
+    source: { type: mongoose.Types.UUID },
+    target: { type: mongoose.Types.UUID },
   },
   { collection: 'party_relationships' }
 );

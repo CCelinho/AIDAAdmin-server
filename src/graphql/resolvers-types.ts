@@ -35,6 +35,26 @@ export type Address = {
 
 export type AnyOrg = Department | Service | Specialty | Uh | Unit;
 
+export type Base = {
+  __typename?: 'Base';
+  CR?: Maybe<Scalars['String']['output']>;
+  ID_CP?: Maybe<Scalars['String']['output']>;
+  VIG_FIM?: Maybe<Scalars['Date']['output']>;
+  VIG_INI?: Maybe<Scalars['Date']['output']>;
+  _id?: Maybe<Scalars['ObjectId']['output']>;
+  active?: Maybe<Scalars['Boolean']['output']>;
+  alias?: Maybe<Scalars['String']['output']>;
+  contact?: Maybe<ExtendedContactDetail>;
+  description?: Maybe<Scalars['String']['output']>;
+  endpoint?: Maybe<Reference>;
+  errorflag?: Maybe<Scalars['Boolean']['output']>;
+  identifier?: Maybe<Identifier>;
+  name?: Maybe<Scalars['String']['output']>;
+  partOf?: Maybe<Reference>;
+  type?: Maybe<CodeableConcept>;
+  uuid?: Maybe<Scalars['UUID']['output']>;
+};
+
 export enum CacheControlScope {
   Private = 'PRIVATE',
   Public = 'PUBLIC'
@@ -119,6 +139,15 @@ export type Identifier = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
+export type OrgSet = {
+  __typename?: 'OrgSet';
+  departments?: Maybe<Array<Department>>;
+  services?: Maybe<Array<Service>>;
+  specialties?: Maybe<Array<Specialty>>;
+  uhs?: Maybe<Array<Uh>>;
+  units?: Maybe<Array<Unit>>;
+};
+
 export type Organization = {
   CR?: Maybe<Scalars['String']['output']>;
   ID_CP?: Maybe<Scalars['String']['output']>;
@@ -151,11 +180,14 @@ export type Query = {
   departmentById: Department;
   departmentSearch?: Maybe<Array<Department>>;
   departments?: Maybe<Array<Department>>;
+  everythingByServ: RelationshipLine;
+  everythingBySpec: RelationshipLine;
+  everythingByUnit: RelationshipLine;
   serviceById: Service;
   services?: Maybe<Array<Service>>;
   specialties?: Maybe<Array<Specialty>>;
   specialtyById: Specialty;
-  textSearch?: Maybe<Array<Maybe<Array<AnyOrg>>>>;
+  textSearch: OrgSet;
   uhById: Uh;
   uhs?: Maybe<Array<Uh>>;
   unitById: Unit;
@@ -186,6 +218,21 @@ export type QueryDepartmentSearchArgs = {
 export type QueryDepartmentsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryEverythingByServArgs = {
+  servId: Scalars['ObjectId']['input'];
+};
+
+
+export type QueryEverythingBySpecArgs = {
+  specId: Scalars['ObjectId']['input'];
+};
+
+
+export type QueryEverythingByUnitArgs = {
+  unitId: Scalars['ObjectId']['input'];
 };
 
 
@@ -243,6 +290,15 @@ export type Reference = {
   identifier?: Maybe<Identifier>;
   reference?: Maybe<Scalars['String']['output']>;
   type?: Maybe<Scalars['String']['output']>;
+};
+
+export type RelationshipLine = {
+  __typename?: 'RelationshipLine';
+  department?: Maybe<Department>;
+  service?: Maybe<Service>;
+  specialty?: Maybe<Specialty>;
+  uh?: Maybe<Uh>;
+  unit?: Maybe<Unit>;
 };
 
 export type Service = Organization & {
@@ -425,6 +481,7 @@ export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
 export type ResolversTypes = {
   Address: ResolverTypeWrapper<Address>;
   AnyOrg: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['AnyOrg']>;
+  Base: ResolverTypeWrapper<Base>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CacheControlScope: CacheControlScope;
   CodeableConcept: ResolverTypeWrapper<CodeableConcept>;
@@ -437,10 +494,12 @@ export type ResolversTypes = {
   Identifier: ResolverTypeWrapper<Identifier>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   ObjectId: ResolverTypeWrapper<Scalars['ObjectId']['output']>;
+  OrgSet: ResolverTypeWrapper<OrgSet>;
   Organization: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['Organization']>;
   Period: ResolverTypeWrapper<Period>;
   Query: ResolverTypeWrapper<{}>;
   Reference: ResolverTypeWrapper<Reference>;
+  RelationshipLine: ResolverTypeWrapper<RelationshipLine>;
   Service: ResolverTypeWrapper<Service>;
   Specialty: ResolverTypeWrapper<Specialty>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -453,6 +512,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Address: Address;
   AnyOrg: ResolversUnionTypes<ResolversParentTypes>['AnyOrg'];
+  Base: Base;
   Boolean: Scalars['Boolean']['output'];
   CodeableConcept: CodeableConcept;
   Coding: Coding;
@@ -464,10 +524,12 @@ export type ResolversParentTypes = {
   Identifier: Identifier;
   Int: Scalars['Int']['output'];
   ObjectId: Scalars['ObjectId']['output'];
+  OrgSet: OrgSet;
   Organization: ResolversInterfaceTypes<ResolversParentTypes>['Organization'];
   Period: Period;
   Query: {};
   Reference: Reference;
+  RelationshipLine: RelationshipLine;
   Service: Service;
   Specialty: Specialty;
   String: Scalars['String']['output'];
@@ -500,6 +562,26 @@ export type AddressResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type AnyOrgResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnyOrg'] = ResolversParentTypes['AnyOrg']> = {
   __resolveType: TypeResolveFn<'Department' | 'Service' | 'Specialty' | 'UH' | 'Unit', ParentType, ContextType>;
+};
+
+export type BaseResolvers<ContextType = any, ParentType extends ResolversParentTypes['Base'] = ResolversParentTypes['Base']> = {
+  CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  VIG_INI?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  _id?: Resolver<Maybe<ResolversTypes['ObjectId']>, ParentType, ContextType>;
+  active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  contact?: Resolver<Maybe<ResolversTypes['ExtendedContactDetail']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  endpoint?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  errorflag?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  partOf?: Resolver<Maybe<ResolversTypes['Reference']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['CodeableConcept']>, ParentType, ContextType>;
+  uuid?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CodeableConceptResolvers<ContextType = any, ParentType extends ResolversParentTypes['CodeableConcept'] = ResolversParentTypes['CodeableConcept']> = {
@@ -589,6 +671,15 @@ export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'ObjectId';
 }
 
+export type OrgSetResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrgSet'] = ResolversParentTypes['OrgSet']> = {
+  departments?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType>;
+  services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType>;
+  specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType>;
+  uhs?: Resolver<Maybe<Array<ResolversTypes['UH']>>, ParentType, ContextType>;
+  units?: Resolver<Maybe<Array<ResolversTypes['Unit']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type OrganizationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
   __resolveType: TypeResolveFn<'Department' | 'Service' | 'Specialty' | 'UH' | 'Unit', ParentType, ContextType>;
   CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -621,11 +712,14 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   departmentById?: Resolver<ResolversTypes['Department'], ParentType, ContextType, RequireFields<QueryDepartmentByIdArgs, 'id'>>;
   departmentSearch?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType, RequireFields<QueryDepartmentSearchArgs, 'searchString'>>;
   departments?: Resolver<Maybe<Array<ResolversTypes['Department']>>, ParentType, ContextType, Partial<QueryDepartmentsArgs>>;
+  everythingByServ?: Resolver<ResolversTypes['RelationshipLine'], ParentType, ContextType, RequireFields<QueryEverythingByServArgs, 'servId'>>;
+  everythingBySpec?: Resolver<ResolversTypes['RelationshipLine'], ParentType, ContextType, RequireFields<QueryEverythingBySpecArgs, 'specId'>>;
+  everythingByUnit?: Resolver<ResolversTypes['RelationshipLine'], ParentType, ContextType, RequireFields<QueryEverythingByUnitArgs, 'unitId'>>;
   serviceById?: Resolver<ResolversTypes['Service'], ParentType, ContextType, RequireFields<QueryServiceByIdArgs, 'id'>>;
   services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesArgs>>;
   specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType, Partial<QuerySpecialtiesArgs>>;
   specialtyById?: Resolver<ResolversTypes['Specialty'], ParentType, ContextType, RequireFields<QuerySpecialtyByIdArgs, 'id'>>;
-  textSearch?: Resolver<Maybe<Array<Maybe<Array<ResolversTypes['AnyOrg']>>>>, ParentType, ContextType, RequireFields<QueryTextSearchArgs, 'searchString'>>;
+  textSearch?: Resolver<ResolversTypes['OrgSet'], ParentType, ContextType, RequireFields<QueryTextSearchArgs, 'searchString'>>;
   uhById?: Resolver<ResolversTypes['UH'], ParentType, ContextType, RequireFields<QueryUhByIdArgs, 'id'>>;
   uhs?: Resolver<Maybe<Array<ResolversTypes['UH']>>, ParentType, ContextType, Partial<QueryUhsArgs>>;
   unitById?: Resolver<ResolversTypes['Unit'], ParentType, ContextType, RequireFields<QueryUnitByIdArgs, 'id'>>;
@@ -637,6 +731,15 @@ export type ReferenceResolvers<ContextType = any, ParentType extends ResolversPa
   identifier?: Resolver<Maybe<ResolversTypes['Identifier']>, ParentType, ContextType>;
   reference?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RelationshipLineResolvers<ContextType = any, ParentType extends ResolversParentTypes['RelationshipLine'] = ResolversParentTypes['RelationshipLine']> = {
+  department?: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType>;
+  service?: Resolver<Maybe<ResolversTypes['Service']>, ParentType, ContextType>;
+  specialty?: Resolver<Maybe<ResolversTypes['Specialty']>, ParentType, ContextType>;
+  uh?: Resolver<Maybe<ResolversTypes['UH']>, ParentType, ContextType>;
+  unit?: Resolver<Maybe<ResolversTypes['Unit']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -746,6 +849,7 @@ export type UnitResolvers<ContextType = any, ParentType extends ResolversParentT
 export type Resolvers<ContextType = any> = {
   Address?: AddressResolvers<ContextType>;
   AnyOrg?: AnyOrgResolvers<ContextType>;
+  Base?: BaseResolvers<ContextType>;
   CodeableConcept?: CodeableConceptResolvers<ContextType>;
   Coding?: CodingResolvers<ContextType>;
   ContactPoint?: ContactPointResolvers<ContextType>;
@@ -755,10 +859,12 @@ export type Resolvers<ContextType = any> = {
   HumanName?: HumanNameResolvers<ContextType>;
   Identifier?: IdentifierResolvers<ContextType>;
   ObjectId?: GraphQLScalarType;
+  OrgSet?: OrgSetResolvers<ContextType>;
   Organization?: OrganizationResolvers<ContextType>;
   Period?: PeriodResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Reference?: ReferenceResolvers<ContextType>;
+  RelationshipLine?: RelationshipLineResolvers<ContextType>;
   Service?: ServiceResolvers<ContextType>;
   Specialty?: SpecialtyResolvers<ContextType>;
   UH?: UhResolvers<ContextType>;

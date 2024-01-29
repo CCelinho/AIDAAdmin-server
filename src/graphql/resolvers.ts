@@ -31,6 +31,8 @@ export const resolvers: Resolvers = {
         return 'Service';
       } else if (org.type?.coding?.code === 'unit') {
         return 'Unit';
+      } else if (org.type?.coding?.code === 'spec') {
+        return 'Specialty';
       } else {
         throw new Error(
           '__resolveType: Invalid organization type definition: ' +
@@ -44,7 +46,8 @@ export const resolvers: Resolvers = {
       return fetchUhChildren(parent);
     },
     errorflag: async (uho) => {
-      return await findErrors(uho);
+      const flag = await findErrors(uho);
+      return flag;
     },
   },
   Department: {
@@ -98,7 +101,7 @@ export const resolvers: Resolvers = {
   },
   Query: {
     uhs: async (_, { offset, limit }) => {
-      let query = uh.find({ active: true });
+      let query = uh.find({});
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -109,7 +112,7 @@ export const resolvers: Resolvers = {
       }
     },
     departments: async (_, { offset, limit }) => {
-      let query = dept.find({ active: true });
+      let query = dept.find({});
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -120,7 +123,7 @@ export const resolvers: Resolvers = {
       }
     },
     services: async (_, { offset, limit }) => {
-      let query = serv.find({ active: true });
+      let query = serv.find({});
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -131,7 +134,7 @@ export const resolvers: Resolvers = {
       }
     },
     units: async (_, { offset, limit }) => {
-      let query = unit.find({ active: true });
+      let query = unit.find({});
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -142,7 +145,7 @@ export const resolvers: Resolvers = {
       }
     },
     specialties: async (_, { offset, limit }) => {
-      let query = spec.find({ active: true });
+      let query = spec.find({});
       offset && query.skip(offset);
       limit && query.limit(limit);
       try {
@@ -157,42 +160,112 @@ export const resolvers: Resolvers = {
       if (!uho) {
         throw new Error('UH not found: ' + id);
       }
-      return uho.toObject();
+      return uho;
     },
     departmentById: async (_, { id }) => {
       const dep = await dept.findById(id);
-      console.log(id);
-      console.log(dep);
       if (!dep) {
         throw new Error('Department not found: ' + id);
       }
-      return dep.toObject();
+      return dep;
     },
     serviceById: async (_, { id }) => {
       const ser = await serv.findById(id);
       if (!ser) {
         throw new Error('Service not found: ' + id);
       }
-      return ser.toObject();
+      return ser;
     },
     unitById: async (_, { id }) => {
       const uni = await unit.findById(id);
       if (!uni) {
         throw new Error('Unit not found: ' + id);
       }
-      return uni.toObject();
+      return uni;
     },
     specialtyById: async (_, { id }) => {
       const spe = await spec.findById(id);
       if (!spe) {
         throw new Error('Specialty not found: ' + id);
       }
-      return spe.toObject();
+      return spe;
+    },
+    everythingBySpec: async (_, { specId }) => {
+      const rel = await relationship.findOne({ specialty: specId });
+      if (!rel) {
+        throw new Error('No specialty with ID ' + specId);
+      }
+      const spe = await spec.findById(rel.specialty);
+      const uni = await unit.findById(rel.unit);
+      const ser = await serv.findById(rel.service);
+      const dep = await dept.findById(rel.department);
+      const u = await uh.findById(rel.uh);
+
+      if (!spe || !uni || !ser || !dep || !u) {
+        throw new Error(
+          'Inconsistency in data: Organization ID listed in relationship document not found'
+        );
+      }
+
+      const result = {
+        specialty: spe,
+        unit: uni,
+        service: ser,
+        department: dep,
+        uh: u,
+      };
+      return result;
+    },
+    everythingByUnit: async (_, { unitId }) => {
+      const rel = await relationship.findOne({ unit: unitId });
+      if (!rel) {
+        throw new Error('No specialty with ID ' + unitId);
+      }
+      const uni = await unit.findById(rel.unit);
+      const ser = await serv.findById(rel.service);
+      const dep = await dept.findById(rel.department);
+      const u = await uh.findById(rel.uh);
+
+      if (!uni || !ser || !dep || !u) {
+        throw new Error(
+          'Inconsistency in data: Organization ID listed in relationship document not found '
+        );
+      }
+
+      const result = {
+        unit: uni,
+        service: ser,
+        department: dep,
+        uh: u,
+      };
+      return result;
+    },
+    everythingByServ: async (_, { servId }) => {
+      const rel = await relationship.findOne({ service: servId });
+      if (!rel) {
+        throw new Error('No service with ID ' + servId);
+      }
+      const ser = await serv.findById(rel.service);
+      const dep = await dept.findById(rel.department);
+      const u = await uh.findById(rel.uh);
+
+      if (!ser || !dep || !u) {
+        throw new Error(
+          'Inconsistency in data: Organization ID listed in relationship document not found '
+        );
+      }
+
+      const result = {
+        service: ser,
+        department: dep,
+        uh: u,
+      };
+      return result;
     },
     departmentByCOD: async (_, { cod }) => {
       try {
         const dep = await dept.findOne({ COD_DEPARTAMENTO: cod });
-        return dep ? dep.toObject() : null;
+        return dep ? dep : null;
       } catch {
         throw new Error('Department not found');
       }
@@ -200,7 +273,7 @@ export const resolvers: Resolvers = {
     departmentByDES: async (_, { des }) => {
       try {
         const dep = await dept.findOne({ DES_DEPARTAMENTO: des });
-        return dep ? dep.toObject() : null;
+        return dep ? dep : null;
       } catch {
         throw new Error('Department not found');
       }
@@ -219,43 +292,46 @@ export const resolvers: Resolvers = {
       }
     },
     textSearch: async (_, { searchString }) => {
-      try {
-        const uhs = await uh.find({
-          $or: [
-            { name: { $regex: searchString, $options: 'i' } },
-            { 'partOf.display': { $regex: searchString, $options: 'i' } },
-          ],
-        });
-        const deps = await dept.find({
-          $or: [
-            { name: { $regex: searchString, $options: 'i' } },
-            { 'partOf.display': { $regex: searchString, $options: 'i' } },
-          ],
-        });
-        const sers = await serv.find({
-          $or: [
-            { name: { $regex: searchString, $options: 'i' } },
-            { 'partOf.display': { $regex: searchString, $options: 'i' } },
-          ],
-        });
-        const unis = await unit.find({
-          $or: [
-            { name: { $regex: searchString, $options: 'i' } },
-            { 'partOf.display': { $regex: searchString, $options: 'i' } },
-          ],
-        });
-        const spes = await spec.find({
-          $or: [
-            { name: { $regex: searchString, $options: 'i' } },
-            { 'partOf.display': { $regex: searchString, $options: 'i' } },
-          ],
-        });
+      const uhs = await uh.find({
+        $or: [
+          { name: { $regex: searchString, $options: 'i' } },
+          { 'partOf.display': { $regex: searchString, $options: 'i' } },
+        ],
+      });
+      const deps = await dept.find({
+        $or: [
+          { name: { $regex: searchString, $options: 'i' } },
+          { 'partOf.display': { $regex: searchString, $options: 'i' } },
+        ],
+      });
+      const sers = await serv.find({
+        $or: [
+          { name: { $regex: searchString, $options: 'i' } },
+          { 'partOf.display': { $regex: searchString, $options: 'i' } },
+        ],
+      });
+      const unis = await unit.find({
+        $or: [
+          { name: { $regex: searchString, $options: 'i' } },
+          { 'partOf.display': { $regex: searchString, $options: 'i' } },
+        ],
+      });
+      const spes = await spec.find({
+        $or: [
+          { name: { $regex: searchString } },
+          { COD_ESTATISTICO: { $regex: searchString, $options: 'i' } },
+          { 'partOf.display': { $regex: searchString, $options: 'i' } },
+        ],
+      });
 
-        const result = [uhs, deps, sers, unis, spes];
-        return result;
-      } catch {
-        throw new Error('String search failed ' + searchString);
-      }
+      const result = {
+        uhs: uhs,
+        departments: deps,
+        services: sers,
+        units: unis,
+        specialties: spes,
+      };
+      return result;
     },
   },
 };
