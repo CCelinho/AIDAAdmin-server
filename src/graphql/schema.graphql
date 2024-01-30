@@ -1,5 +1,8 @@
 scalar Date
 scalar ObjectId
+scalar UUID
+
+union AnyOrg = Unit | Service | Department | UH | Specialty
 
 enum CacheControlScope {
   PUBLIC
@@ -94,9 +97,11 @@ interface Organization {
   contact: ExtendedContactDetail
   partOf: Reference
   endpoint: Reference
+  uuid: UUID
+  errorflag: Boolean
 }
 
-type UH implements Organization {
+type Base {
   _id: ObjectId
   ID_CP: String
   VIG_INI: Date
@@ -111,8 +116,30 @@ type UH implements Organization {
   contact: ExtendedContactDetail
   partOf: Reference
   endpoint: Reference
+  uuid: UUID
+  errorflag: Boolean
+}
+
+type UH implements Organization {
+  _id: ObjectId
+  ID_CP: String
+  VIG_INI: Date
+  VIG_FIM: Date
+  UH: String
+  CR: String
+  identifier: Identifier
+  active: Boolean
+  type: CodeableConcept
+  name: String
+  alias: String
+  description: String
+  contact: ExtendedContactDetail
+  partOf: Reference
+  endpoint: Reference
   COD_ESTATISTICO: [String]
-  CHILDREN: [Int]
+  children: [Department]
+  uuid: UUID
+  errorflag: Boolean
 }
 
 type Department implements Organization {
@@ -131,9 +158,12 @@ type Department implements Organization {
   partOf: Reference
   endpoint: Reference
   COD_ESTATISTICO: [String]
-  CHILDREN: [Int]
   DES_DEPARTAMENTO: String
   COD_DEPARTAMENTO: Int
+  children: [Service]
+  parents: [UH!]
+  uuid: UUID
+  errorflag: Boolean
 }
 
 type Service implements Organization {
@@ -152,12 +182,15 @@ type Service implements Organization {
   partOf: Reference
   endpoint: Reference
   COD_ESTATISTICO: [String]
-  CHILDREN: [Int]
   DES_SERVICO: String
   COD_SERVICO: Int
+  children: [Unit]
+  parent: Department
+  uuid: UUID
+  errorflag: Boolean
 }
 
-type Unit implements Organization {
+type Unit implements Organization @cacheControl(maxAge: 90) {
   _id: ObjectId
   ID_CP: String
   VIG_INI: Date
@@ -175,9 +208,13 @@ type Unit implements Organization {
   COD_ESTATISTICO: [String]
   DES_UNIDADE: String
   COD_UNIDADE: Int
+  children: [Specialty]
+  parent: Service
+  uuid: UUID
+  errorflag: Boolean
 }
 
-type Specialty implements Organization {
+type Specialty implements Organization @cacheControl(maxAge: 90) {
   _id: ObjectId
   ID_CP: String
   VIG_INI: Date
@@ -197,31 +234,45 @@ type Specialty implements Organization {
   AGREGA3: String
   DES_ESTATISTICO: String
   COD_ESTATISTICO: String
+  parent: Unit
+  uuid: UUID
+  errorflag: Boolean
 }
 
-type DepartmentTree {
-  uhs: [UH!]
+type RelationshipLine {
+  uh: UH
   department: Department
+  service: Service
+  unit: Unit
+  specialty: Specialty
+}
+
+type OrgSet {
+  uhs: [UH!]
+  departments: [Department!]
   services: [Service!]
   units: [Unit!]
   specialties: [Specialty!]
 }
 
 type Query {
+  uhs(offset: Int, limit: Int): [UH!]
   departments(offset: Int, limit: Int): [Department!]
   services(offset: Int, limit: Int): [Service!]
   units(offset: Int, limit: Int): [Unit!]
   specialties(offset: Int, limit: Int): [Specialty!]
-  uhs(offset: Int, limit: Int): [UH!]
-  depChildren(id: ObjectId!): [Service!]
-  serChildren(id: ObjectId!): [Unit!]
-  depTree(id: ObjectId!): DepartmentTree!
-  organizations(offset: Int, limit: Int): [Organization!]
-  departmentById(id: ObjectId!): Department
+  uhById(id: ObjectId!): UH!
+  departmentById(id: ObjectId!): Department!
+  serviceById(id: ObjectId!): Service!
+  unitById(id: ObjectId!): Unit!
+  specialtyById(id: ObjectId!): Specialty!
+  everythingBySpec(specId: ObjectId!): RelationshipLine!
+  everythingByUnit(unitId: ObjectId!): RelationshipLine!
+  everythingByServ(servId: ObjectId!): RelationshipLine!
   departmentByCOD(cod: Int!): Department
   departmentByDES(des: String!): Department
-  servicesByDep(offset: Int, limit: Int, cod: Int): [Service!]
   departmentSearch(searchString: String!): [Department!]
+  textSearch(searchString: String!): OrgSet!
 }
 
 directive @cacheControl(

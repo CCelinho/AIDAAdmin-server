@@ -79,6 +79,7 @@ const extendedContactDetailSchema = new mongoose.Schema({
 // Organizations
 const baseSchema = new mongoose.Schema(
   {
+    uuid: { type: mongoose.Types.UUID },
     ID_CP: { type: String },
     VIG_INI: { type: Date },
     VIG_FIM: { type: Date },
@@ -168,9 +169,11 @@ export const specialtySchema = extendSchema(
 
 const relationshipSchema = new mongoose.Schema(
   {
-    parent: { type: mongoose.Types.ObjectId },
-    child: { type: mongoose.Types.ObjectId },
-    type: { type: Number },
+    uh: { type: mongoose.Types.ObjectId },
+    department: { type: mongoose.Types.ObjectId },
+    service: { type: mongoose.Types.ObjectId },
+    unit: { type: mongoose.Types.ObjectId },
+    specialty: { type: mongoose.Types.ObjectId },
   },
   { collection: cn.rels }
 );
@@ -208,8 +211,16 @@ const contactDataSchema = new mongoose.Schema(
   { collection: cn.contacts }
 );
 
+const partyRelSchema = new mongoose.Schema(
+  {
+    source: { type: mongoose.Types.UUID },
+    target: { type: mongoose.Types.UUID },
+  },
+  { collection: 'party_relationships' }
+);
+
 export const uhSchema = new mongoose.Schema({
-  UH: [{ type: String }],
+  UH: { type: String },
   COD_ESTATISTICO: [{ type: String }],
 });
 
@@ -248,6 +259,7 @@ export const service = mongoose.model('service', serviceSchema);
 export const uni = mongoose.model('uni', uniSchema);
 export const specialty = mongoose.model('specialty', specialtySchema);
 export const contactData = mongoose.model('contacts', contactDataSchema);
+export const partyRel = mongoose.model('partyRel', partyRelSchema);
 export const relationship = mongoose.model('relationship', relationshipSchema);
 
 type uh = InferSchemaType<typeof uhospSchema>;

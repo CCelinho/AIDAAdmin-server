@@ -1,5 +1,6 @@
 import { specialty } from '../schemas/schemas';
 import { collectionNames } from '../../constants';
+import { UUID } from 'mongodb';
 
 const formatSpecialty = async () => {
   await specialty
@@ -164,6 +165,15 @@ const formatSpecialty = async () => {
            * expression: The new field expression.
            */
           {
+            uuid: {
+              $function: {
+                body: function () {
+                  return new UUID();
+                },
+                args: [],
+                lang: 'js',
+              },
+            },
             active: true,
             type: {
               coding: {
