@@ -35,7 +35,7 @@ export type Address = {
 
 export type AnyOrg = Department | Service | Specialty | Uh | Unit;
 
-export type Base = {
+export type Base = Organization & {
   __typename?: 'Base';
   CR?: Maybe<Scalars['String']['output']>;
   ID_CP?: Maybe<Scalars['String']['output']>;
@@ -183,6 +183,7 @@ export type Query = {
   everythingByServ: RelationshipLine;
   everythingBySpec: RelationshipLine;
   everythingByUnit: RelationshipLine;
+  orgs?: Maybe<Array<AnyOrg>>;
   serviceById: Service;
   services?: Maybe<Array<Service>>;
   specialties?: Maybe<Array<Specialty>>;
@@ -233,6 +234,12 @@ export type QueryEverythingBySpecArgs = {
 
 export type QueryEverythingByUnitArgs = {
   unitId: Scalars['ObjectId']['input'];
+};
+
+
+export type QueryOrgsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -474,7 +481,7 @@ export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
 
 /** Mapping of interface types */
 export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
-  Organization: ( Department ) | ( Service ) | ( Specialty ) | ( Uh ) | ( Unit );
+  Organization: ( Base ) | ( Department ) | ( Service ) | ( Specialty ) | ( Uh ) | ( Unit );
 };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -681,7 +688,7 @@ export type OrgSetResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type OrganizationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
-  __resolveType: TypeResolveFn<'Department' | 'Service' | 'Specialty' | 'UH' | 'Unit', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Base' | 'Department' | 'Service' | 'Specialty' | 'UH' | 'Unit', ParentType, ContextType>;
   CR?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ID_CP?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   VIG_FIM?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
@@ -715,6 +722,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   everythingByServ?: Resolver<ResolversTypes['RelationshipLine'], ParentType, ContextType, RequireFields<QueryEverythingByServArgs, 'servId'>>;
   everythingBySpec?: Resolver<ResolversTypes['RelationshipLine'], ParentType, ContextType, RequireFields<QueryEverythingBySpecArgs, 'specId'>>;
   everythingByUnit?: Resolver<ResolversTypes['RelationshipLine'], ParentType, ContextType, RequireFields<QueryEverythingByUnitArgs, 'unitId'>>;
+  orgs?: Resolver<Maybe<Array<ResolversTypes['AnyOrg']>>, ParentType, ContextType, Partial<QueryOrgsArgs>>;
   serviceById?: Resolver<ResolversTypes['Service'], ParentType, ContextType, RequireFields<QueryServiceByIdArgs, 'id'>>;
   services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesArgs>>;
   specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType, Partial<QuerySpecialtiesArgs>>;

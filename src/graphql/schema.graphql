@@ -101,7 +101,7 @@ interface Organization {
   errorflag: Boolean
 }
 
-type Base {
+type Base implements Organization {
   _id: ObjectId
   ID_CP: String
   VIG_INI: Date
@@ -273,6 +273,7 @@ type Query {
   departmentByDES(des: String!): Department
   departmentSearch(searchString: String!): [Department!]
   textSearch(searchString: String!): OrgSet!
+  orgs(offset: Int, limit: Int): [AnyOrg!]
 }
 
 directive @cacheControl(

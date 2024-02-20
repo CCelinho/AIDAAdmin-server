@@ -93,6 +93,7 @@ const baseSchema = new mongoose.Schema(
     contact: [{ type: extendedContactDetailSchema }],
     partOf: { type: referenceSchema },
     endpoint: { type: referenceSchema },
+    errorflag: { type: Boolean },
   },
   { collection: collectionNames.all }
 );
@@ -250,6 +251,8 @@ export const specSchema = new mongoose.Schema({
   AGREGA3: { type: String },
 });
 
+export const emptySchema = new mongoose.Schema({});
+
 export type identifier = InferSchemaType<typeof identifierSchema>;
 
 // Models defined solely for purpose of aggregation
@@ -267,11 +270,14 @@ type dept = InferSchemaType<typeof departmentSchema>;
 type serv = InferSchemaType<typeof serviceSchema>;
 type unit = InferSchemaType<typeof uniSchema>;
 type spec = InferSchemaType<typeof specialtySchema>;
+type base = InferSchemaType<typeof baseSchema>;
+type empty = InferSchemaType<typeof emptySchema>;
 
 // Models defined for querying
-export const base = mongoose.model('base', baseSchema);
+export const base = mongoose.model<base>('base', baseSchema);
 export const uh = base.discriminator<uh>('uh', uhSchema);
 export const dept = base.discriminator<dept>('dept', deptSchema);
 export const unit = base.discriminator<unit>('unit', unitSchema);
 export const serv = base.discriminator<serv>('serv', servSchema);
 export const spec = base.discriminator<spec>('spec', specSchema);
+export const any = base.discriminator<empty>('any', emptySchema);
