@@ -188,7 +188,7 @@ export type Query = {
   services?: Maybe<Array<Service>>;
   specialties?: Maybe<Array<Specialty>>;
   specialtyById: Specialty;
-  textSearch: OrgSet;
+  textSearch?: Maybe<Array<AnyOrg>>;
   uhById: Uh;
   uhs?: Maybe<Array<Uh>>;
   unitById: Unit;
@@ -727,7 +727,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   services?: Resolver<Maybe<Array<ResolversTypes['Service']>>, ParentType, ContextType, Partial<QueryServicesArgs>>;
   specialties?: Resolver<Maybe<Array<ResolversTypes['Specialty']>>, ParentType, ContextType, Partial<QuerySpecialtiesArgs>>;
   specialtyById?: Resolver<ResolversTypes['Specialty'], ParentType, ContextType, RequireFields<QuerySpecialtyByIdArgs, 'id'>>;
-  textSearch?: Resolver<ResolversTypes['OrgSet'], ParentType, ContextType, RequireFields<QueryTextSearchArgs, 'searchString'>>;
+  textSearch?: Resolver<Maybe<Array<ResolversTypes['AnyOrg']>>, ParentType, ContextType, RequireFields<QueryTextSearchArgs, 'searchString'>>;
   uhById?: Resolver<ResolversTypes['UH'], ParentType, ContextType, RequireFields<QueryUhByIdArgs, 'id'>>;
   uhs?: Resolver<Maybe<Array<ResolversTypes['UH']>>, ParentType, ContextType, Partial<QueryUhsArgs>>;
   unitById?: Resolver<ResolversTypes['Unit'], ParentType, ContextType, RequireFields<QueryUnitByIdArgs, 'id'>>;

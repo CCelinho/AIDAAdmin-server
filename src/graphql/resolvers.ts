@@ -304,46 +304,14 @@ export const resolvers: Resolvers = {
       }
     },
     textSearch: async (_, { searchString }) => {
-      const uhs = await uh.find({
+      const orgs = await base.find({
         $or: [
           { name: { $regex: searchString, $options: 'i' } },
-          { 'partOf.display': { $regex: searchString, $options: 'i' } },
-        ],
-      });
-      const deps = await dept.find({
-        $or: [
-          { name: { $regex: searchString, $options: 'i' } },
-          { 'partOf.display': { $regex: searchString, $options: 'i' } },
-        ],
-      });
-      const sers = await serv.find({
-        $or: [
-          { name: { $regex: searchString, $options: 'i' } },
-          { 'partOf.display': { $regex: searchString, $options: 'i' } },
-        ],
-      });
-      const unis = await unit.find({
-        $or: [
-          { name: { $regex: searchString, $options: 'i' } },
-          { 'partOf.display': { $regex: searchString, $options: 'i' } },
-        ],
-      });
-      const spes = await spec.find({
-        $or: [
-          { name: { $regex: searchString } },
-          { COD_ESTATISTICO: { $regex: searchString, $options: 'i' } },
           { 'partOf.display': { $regex: searchString, $options: 'i' } },
         ],
       });
 
-      const result = {
-        uhs: uhs,
-        departments: deps,
-        services: sers,
-        units: unis,
-        specialties: spes,
-      };
-      return result;
+      return orgs;
     },
   },
 };
