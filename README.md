@@ -1,27 +1,9 @@
-# React + TypeScript + Vite
+# AIDAAdmin server
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AIDAAdmin is an all-in-one dashboard designed for hospital personnel use to view and manage hospital departments and services, work teams and their material, and general inventory. AIDAAdmin was created for use in Centro Hospitalar Universitário Santo António (Porto) and designed for integration with existing software applications.
 
-Currently, two official plugins are available:
+This repository contains the server for the "Orgs" module of the AIDAAdmin application and is still under development.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<img alt='App Screenshot' src='https://i.imgur.com/OzsxdqS.png' width=100%>
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+This project was created using Vite and runs on ApolloClient with React + Typescript and GraphQL communication.
