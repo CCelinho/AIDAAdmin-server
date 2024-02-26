@@ -7,7 +7,6 @@ import {
   unit,
   relationship,
   base,
-  any,
 } from '../mongo/schemas/schemas';
 import {
   fetchDeptChildren,
@@ -102,6 +101,17 @@ export const resolvers: Resolvers = {
     },
   },
   Query: {
+    orgs: async (_, { offset, limit }) => {
+      let query = base.find({});
+      offset && query.skip(offset);
+      limit && query.limit(limit);
+      try {
+        const result = query.exec();
+        return await result;
+      } catch {
+        throw new Error('No organizations found');
+      }
+    },
     uhs: async (_, { offset, limit }) => {
       let query = uh.find({});
       offset && query.skip(offset);
@@ -334,17 +344,6 @@ export const resolvers: Resolvers = {
         specialties: spes,
       };
       return result;
-    },
-    orgs: async (_, { offset, limit }) => {
-      let query = any.find({});
-      offset && query.skip(offset);
-      limit && query.limit(limit);
-      try {
-        const result = query.exec();
-        return await result;
-      } catch {
-        throw new Error('No organizations found');
-      }
     },
   },
 };
